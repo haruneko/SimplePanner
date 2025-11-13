@@ -12,7 +12,7 @@ using namespace VSTGUI;
 //------------------------------------------------------------------------
 // SimplePannerEditor - Custom GUI Editor
 //------------------------------------------------------------------------
-class SimplePannerEditor : public Vst::VSTGUIEditor
+class SimplePannerEditor : public Vst::VSTGUIEditor, public IControlListener
 {
 public:
     SimplePannerEditor(void* controller);
