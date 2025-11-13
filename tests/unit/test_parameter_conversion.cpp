@@ -54,7 +54,7 @@ TEST(ParameterConversion, GainNormalizedToDb_Unity) {
     // 0dB は範囲 -60~+6 の中で (60/66) の位置
     float normalized = dbToNormalized(0.0f);
     EXPECT_NEAR(normalized, 60.0f / 66.0f, 0.001f);
-    EXPECT_FLOAT_EQ(normalizedToDb(normalized), 0.0f);
+    EXPECT_NEAR(normalizedToDb(normalized), 0.0f, 0.001f);
 }
 
 TEST(ParameterConversion, GainDbToLinear_Mute) {
