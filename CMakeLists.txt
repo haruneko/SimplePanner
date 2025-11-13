@@ -33,7 +33,7 @@ endif()
 # VST3 SDK のオプションを設定（サンプルやホスティングをビルドしない）
 set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "")
 set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES OFF CACHE BOOL "")
-set(SMTG_ENABLE_VSTGUI_SUPPORT OFF CACHE BOOL "")
+set(SMTG_ENABLE_VSTGUI_SUPPORT ON CACHE BOOL "")
 
 # VST3 SDK を追加
 add_subdirectory(${VST3_SDK_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vst3sdk)
@@ -42,12 +42,14 @@ add_subdirectory(${VST3_SDK_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vst3sdk)
 set(PLUGIN_SOURCES
     source/pluginprocessor.cpp
     source/plugincontroller.cpp
+    source/plugineditor.cpp
     source/pluginfactory.cpp
 )
 
 set(PLUGIN_HEADERS
     include/pluginprocessor.h
     include/plugincontroller.h
+    include/plugineditor.h
     include/plugids.h
 )
 
@@ -81,6 +83,7 @@ target_include_directories(SimplePanner PRIVATE
 # VST3 SDKのライブラリをリンク
 target_link_libraries(SimplePanner PRIVATE
     sdk
+    vstgui_support
 )
 
 # プラグインの情報を設定

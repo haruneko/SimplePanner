@@ -1,4 +1,5 @@
 #include "plugincontroller.h"
+#include "plugineditor.h"
 #include "plugids.h"
 #include "parameter_utils.h"
 
@@ -168,6 +169,18 @@ tresult PLUGIN_API SimplePannerController::setParamNormalized(Vst::ParamID tag, 
 
     // Set the actual parameter value
     return EditController::setParamNormalized(tag, value);
+}
+
+//------------------------------------------------------------------------
+IPlugView* PLUGIN_API SimplePannerController::createView(const char* name)
+{
+    // Check if editor view is requested
+    if (name && strcmp(name, Vst::ViewType::kEditor) == 0)
+    {
+        // Create our custom editor
+        return new SimplePannerEditor(this);
+    }
+    return nullptr;
 }
 
 } // namespace SimplePanner
