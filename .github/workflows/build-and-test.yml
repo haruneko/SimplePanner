@@ -37,7 +37,10 @@ jobs:
           libcairo2-dev \
           libgtk-3-dev \
           libsqlite3-dev \
-          libxcb-xfixes0-dev
+          libxcb-xfixes0-dev \
+          libpango1.0-dev \
+          libpangocairo-1.0-0 \
+          libgtkmm-3.0-dev
 
     - name: Configure CMake
       run: |
@@ -45,7 +48,7 @@ jobs:
         cd build
         cmake -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DSMTG_ENABLE_VSTGUI_SUPPORT=OFF \
+          -DSMTG_ENABLE_VSTGUI_SUPPORT=ON \
           -DSMTG_ENABLE_VST3_PLUGIN_EXAMPLES=OFF \
           -DSMTG_ENABLE_VST3_HOSTING_EXAMPLES=OFF \
           ..
@@ -97,7 +100,7 @@ jobs:
         cd build
         cmake -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
-          -DSMTG_ENABLE_VSTGUI_SUPPORT=OFF \
+          -DSMTG_ENABLE_VSTGUI_SUPPORT=ON \
           -DSMTG_ENABLE_VST3_PLUGIN_EXAMPLES=OFF \
           -DSMTG_ENABLE_VST3_HOSTING_EXAMPLES=OFF \
           ..
