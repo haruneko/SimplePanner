@@ -114,12 +114,69 @@ void PLUGIN_API SimplePannerEditor::close()
 //------------------------------------------------------------------------
 bool SimplePannerEditor::createUI()
 {
-    CFrame* frame = getFrame();
-    if (!frame)
+    CFrame* frm = getFrame();
+    if (!frm)
         return false;
 
     // Set background color
-    frame->setBackgroundColor(CColor(44, 44, 44, 255)); // #2C2C2C
+    frm->setBackgroundColor(CColor(44, 44, 44, 255)); // #2C2C2C
+
+    // === Left Channel Group ===
+    CRect leftGroupRect(20, 40, 300, 220);
+    CViewContainer* leftGroup = new CViewContainer(leftGroupRect);
+    leftGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    frm->addView(leftGroup);
+
+    // Left Channel Title
+    CRect leftTitleRect(0, 5, 280, 25);
+    CTextLabel* leftTitle = new CTextLabel(leftTitleRect, "LEFT CHANNEL");
+    leftTitle->setFont(kNormalFontBig);
+    leftTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
+    leftTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    leftTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
+    leftTitle->setStyle(CTextLabel::kNoDrawStyle);
+    leftTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
+    leftTitle->sizeToFit();
+    leftTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(leftTitle);
+
+    // === Right Channel Group ===
+    CRect rightGroupRect(320, 40, 580, 220);
+    CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
+    rightGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    frm->addView(rightGroup);
+
+    // Right Channel Title
+    CRect rightTitleRect(0, 5, 260, 25);
+    CTextLabel* rightTitle = new CTextLabel(rightTitleRect, "RIGHT CHANNEL");
+    rightTitle->setFont(kNormalFontBig);
+    rightTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
+    rightTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    rightTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
+    rightTitle->setStyle(CTextLabel::kNoDrawStyle);
+    rightTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
+    rightTitle->sizeToFit();
+    rightTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(rightTitle);
+
+    // === Master Section ===
+    CRect masterRect(20, 240, 580, 360);
+    CViewContainer* masterGroup = new CViewContainer(masterRect);
+    masterGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    frm->addView(masterGroup);
+
+    // Master Title
+    CRect masterTitleRect(0, 5, 560, 25);
+    CTextLabel* masterTitle = new CTextLabel(masterTitleRect, "MASTER");
+    masterTitle->setFont(kNormalFontBig);
+    masterTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
+    masterTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    masterTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
+    masterTitle->setStyle(CTextLabel::kNoDrawStyle);
+    masterTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
+    masterTitle->sizeToFit();
+    masterTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
+    masterGroup->addView(masterTitle);
 
     // TODO: Add GUI controls in subsequent tasks
 
