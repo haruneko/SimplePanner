@@ -94,7 +94,7 @@ target_include_directories(SimplePanner PRIVATE
 # VSTGUI使用時のインクルードパスを追加
 if(SMTG_ENABLE_VSTGUI_SUPPORT)
     target_include_directories(SimplePanner PRIVATE
-        ${SMTG_VSTGUI_SOURCE_DIR}
+        ${VST3_SDK_ROOT}/vstgui4
     )
 endif()
 
