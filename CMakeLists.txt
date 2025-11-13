@@ -89,14 +89,8 @@ endif()
 target_include_directories(SimplePanner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${VST3_SDK_ROOT}
+    ${VST3_SDK_ROOT}/vstgui4
 )
-
-# VSTGUI使用時のインクルードパスを追加
-if(SMTG_ENABLE_VSTGUI_SUPPORT)
-    target_include_directories(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/vstgui4
-    )
-endif()
 
 # VST3 SDKのライブラリをリンク
 target_link_libraries(SimplePanner PRIVATE
