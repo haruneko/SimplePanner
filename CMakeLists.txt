@@ -69,16 +69,19 @@ if(SMTG_LINUX)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
         ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
     )
 elseif(SMTG_WIN)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
         ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
     )
 elseif(SMTG_MAC)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
         ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
     )
 endif()
 
