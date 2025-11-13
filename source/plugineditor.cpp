@@ -109,7 +109,7 @@ bool SimplePannerEditor::createUI()
 }
 
 //------------------------------------------------------------------------
-// valueChanged
+// valueChanged - from IControlListener
 //------------------------------------------------------------------------
 void SimplePannerEditor::valueChanged(CControl* control)
 {
@@ -122,41 +122,17 @@ void SimplePannerEditor::valueChanged(CControl* control)
     // Get the normalized value
     float value = control->getValueNormalized();
 
-    // Update the controller
+    // Update the controller through VSTGUIEditor's performEdit
+    // This automatically handles beginEdit/performEdit/endEdit
     if (getController())
     {
+        // VSTGUIEditor provides performEdit which handles the full edit cycle
         getController()->setParamNormalized(tag, value);
         getController()->performEdit(tag, value);
     }
 
     // Update value display
     updateValueDisplay(tag);
-}
-
-//------------------------------------------------------------------------
-// controlBeginEdit
-//------------------------------------------------------------------------
-void SimplePannerEditor::controlBeginEdit(CControl* control)
-{
-    if (!control)
-        return;
-
-    int32 tag = control->getTag();
-    if (getController())
-        getController()->beginEdit(tag);
-}
-
-//------------------------------------------------------------------------
-// controlEndEdit
-//------------------------------------------------------------------------
-void SimplePannerEditor::controlEndEdit(CControl* control)
-{
-    if (!control)
-        return;
-
-    int32 tag = control->getTag();
-    if (getController())
-        getController()->endEdit(tag);
 }
 
 //------------------------------------------------------------------------

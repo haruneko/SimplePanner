@@ -12,20 +12,18 @@ using namespace VSTGUI;
 //------------------------------------------------------------------------
 // SimplePannerEditor - Custom GUI Editor
 //------------------------------------------------------------------------
-class SimplePannerEditor : public Vst::VSTGUIEditor, public CControlListener
+class SimplePannerEditor : public Vst::VSTGUIEditor
 {
 public:
     SimplePannerEditor(void* controller);
     virtual ~SimplePannerEditor();
 
     //--- from VSTGUIEditor ---------------
-    bool PLUGIN_API open(void* parent, const PlatformType& platformType = kDefaultNative) SMTG_OVERRIDE;
+    bool PLUGIN_API open(void* parent, const PlatformType& platformType = PlatformType::kDefaultNative) SMTG_OVERRIDE;
     void PLUGIN_API close() SMTG_OVERRIDE;
 
-    //--- from CControlListener -----------
-    void valueChanged(CControl* control) SMTG_OVERRIDE;
-    void controlBeginEdit(CControl* control) SMTG_OVERRIDE;
-    void controlEndEdit(CControl* control) SMTG_OVERRIDE;
+    //--- IControlListener implementation -----------
+    void valueChanged(CControl* control);
 
 protected:
     //--- GUI Creation -------------------
