@@ -91,9 +91,8 @@ if(SMTG_MAC)
         BUNDLE_IDENTIFIER "com.example.simplepanner"
         COMPANY_NAME "Example Company"
     )
-elseif(SMTG_WIN)
-    target_sources(SimplePanner PRIVATE resource/plugin.rc)
 endif()
+# Windows resource file (plugin.rc) will be added when GUI is implemented
 
 #------------------------------------------------------------------------
 # Testing Setup
