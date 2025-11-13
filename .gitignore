@@ -1,0 +1,45 @@
+# ビルドディレクトリ
+build/
+cmake-build-*/
+
+# VST3 SDK（自動クローンされる）
+vst3sdk/
+
+# IDE固有のファイル
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# コンパイル済みファイル
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# CMake生成ファイル
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+
+# macOS
+.DS_Store
+*.dSYM/
+
+# Windows
+*.exe
+*.pdb
+*.ilk
+Thumbs.db
+
+# VST3プラグイン（ビルド成果物）
+*.vst3
+
+# その他
+*.log
