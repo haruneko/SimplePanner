@@ -94,3 +94,40 @@ if(SMTG_MAC)
 elseif(SMTG_WIN)
     target_sources(SimplePanner PRIVATE resource/plugin.rc)
 endif()
+
+#------------------------------------------------------------------------
+# Testing Setup
+#------------------------------------------------------------------------
+enable_testing()
+
+# Google Test
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/release-1.12.1.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# Helper function to add unit tests
+function(add_simple_panner_test test_name test_file)
+    add_executable(${test_name} ${test_file})
+    target_link_libraries(${test_name} PRIVATE
+        gtest_main
+        pluginterfaces
+        base
+    )
+    target_include_directories(${test_name} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${VST3_SDK_ROOT}
+    )
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
+
+#------------------------------------------------------------------------
+# Unit Tests
+#------------------------------------------------------------------------
+add_simple_panner_test(test_parameter_conversion
+    tests/unit/test_parameter_conversion.cpp
+)
