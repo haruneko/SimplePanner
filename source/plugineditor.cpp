@@ -51,9 +51,22 @@ SimplePannerEditor::~SimplePannerEditor()
 //------------------------------------------------------------------------
 bool PLUGIN_API SimplePannerEditor::open(void* parent, const PlatformType& platformType)
 {
-    // Call parent implementation
-    if (!VSTGUIEditor::open(parent, platformType))
+    // Create CFrame (main window)
+    CRect frameSize(0, 0, kEditorWidth, kEditorHeight);
+    CFrame* newFrame = new CFrame(frameSize, this);
+
+    if (!newFrame)
         return false;
+
+    // Open the frame
+    if (!newFrame->open(parent, platformType))
+    {
+        newFrame->forget();
+        return false;
+    }
+
+    // Set the frame
+    frame = newFrame;
 
     // Create the UI
     if (!createUI())
@@ -87,8 +100,13 @@ void PLUGIN_API SimplePannerEditor::close()
     mRightDelayLabel = nullptr;
     mMasterGainLabel = nullptr;
 
-    // Call parent implementation
-    VSTGUIEditor::close();
+    // Close and release the frame
+    if (frame)
+    {
+        frame->close();
+        frame->forget();
+        frame = nullptr;
+    }
 }
 
 //------------------------------------------------------------------------
