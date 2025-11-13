@@ -140,6 +140,33 @@ bool SimplePannerEditor::createUI()
     leftTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
     leftGroup->addView(leftTitle);
 
+    // Left Pan Label
+    CRect leftPanLabelRect(40, 40, 240, 55);
+    mLeftPanLabel = new CTextLabel(leftPanLabelRect, "C");
+    mLeftPanLabel->setFont(kNormalFont);
+    mLeftPanLabel->setFontColor(CColor(255, 255, 255, 255));
+    mLeftPanLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftPanLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mLeftPanLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mLeftPanLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(mLeftPanLabel);
+
+    // Left Pan Slider
+    CRect leftPanSliderRect(40, 60, 240, 75);
+    mLeftPanSlider = new CSlider(leftPanSliderRect, this, kParamLeftPan, 40, 240, nullptr, nullptr);
+    mLeftPanSlider->setMin(0.0f);
+    mLeftPanSlider->setMax(1.0f);
+    mLeftPanSlider->setDefaultValue(0.0f); // Full Left = -100
+    leftGroup->addView(mLeftPanSlider);
+
+    // Initialize Left Pan Label
+    if (getController())
+    {
+        float panValue = getController()->getParamNormalized(kParamLeftPan);
+        mLeftPanSlider->setValue(panValue);
+        mLeftPanLabel->setText(formatPanValue(panValue).c_str());
+    }
+
     // === Right Channel Group ===
     CRect rightGroupRect(320, 40, 580, 220);
     CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
@@ -158,6 +185,33 @@ bool SimplePannerEditor::createUI()
     rightTitle->sizeToFit();
     rightTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
     rightGroup->addView(rightTitle);
+
+    // Right Pan Label
+    CRect rightPanLabelRect(30, 40, 230, 55);
+    mRightPanLabel = new CTextLabel(rightPanLabelRect, "C");
+    mRightPanLabel->setFont(kNormalFont);
+    mRightPanLabel->setFontColor(CColor(255, 255, 255, 255));
+    mRightPanLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightPanLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mRightPanLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mRightPanLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(mRightPanLabel);
+
+    // Right Pan Slider
+    CRect rightPanSliderRect(30, 60, 230, 75);
+    mRightPanSlider = new CSlider(rightPanSliderRect, this, kParamRightPan, 30, 230, nullptr, nullptr);
+    mRightPanSlider->setMin(0.0f);
+    mRightPanSlider->setMax(1.0f);
+    mRightPanSlider->setDefaultValue(1.0f); // Full Right = +100
+    rightGroup->addView(mRightPanSlider);
+
+    // Initialize Right Pan Label
+    if (getController())
+    {
+        float panValue = getController()->getParamNormalized(kParamRightPan);
+        mRightPanSlider->setValue(panValue);
+        mRightPanLabel->setText(formatPanValue(panValue).c_str());
+    }
 
     // === Master Section ===
     CRect masterRect(20, 240, 580, 360);
