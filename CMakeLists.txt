@@ -91,9 +91,8 @@ if(SMTG_MAC)
         BUNDLE_IDENTIFIER "com.example.simplepanner"
         COMPANY_NAME "Example Company"
     )
-elseif(SMTG_WIN)
-    target_sources(SimplePanner PRIVATE resource/plugin.rc)
 endif()
+# Windows resource file (plugin.rc) will be added when GUI is implemented
 
 #------------------------------------------------------------------------
 # Testing Setup
@@ -105,6 +104,7 @@ include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/release-1.12.1.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -122,6 +122,14 @@ function(add_simple_panner_test test_name test_file)
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${VST3_SDK_ROOT}
     )
+
+    # macOS specific: Link CoreFoundation framework for FUID::generate()
+    if(APPLE)
+        target_link_libraries(${test_name} PRIVATE
+            "-framework CoreFoundation"
+        )
+    endif()
+
     add_test(NAME ${test_name} COMMAND ${test_name})
 endfunction()
 

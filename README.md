@@ -1,5 +1,7 @@
 # SimplePanner
 
+[![Build and Test](https://github.com/haruneko/SimplePanner/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/haruneko/SimplePanner/actions/workflows/build-and-test.yml)
+
 ステレオイメージとハース効果を精密にコントロールするVST3プラグイン
 
 ## 概要
