@@ -139,3 +139,7 @@ endfunction()
 add_simple_panner_test(test_parameter_conversion
     tests/unit/test_parameter_conversion.cpp
 )
+
+add_simple_panner_test(test_delay_line
+    tests/unit/test_delay_line.cpp
+)
