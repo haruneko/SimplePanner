@@ -148,6 +148,10 @@ add_simple_panner_test(test_parameter_smoother
     tests/unit/test_parameter_smoother.cpp
 )
 
+add_simple_panner_test(test_pan_calculation
+    tests/unit/test_pan_calculation.cpp
+)
+
 #------------------------------------------------------------------------
 # Integration Tests
 #------------------------------------------------------------------------

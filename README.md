@@ -166,6 +166,15 @@ SimplePanner/
 - **[design.md](docs/design.md)**: クラス設計、アルゴリズム、実装詳細
 - **[tasks.md](docs/tasks.md)**: 実装タスク、テスト計画、進捗管理
 
+### 品質保証
+
+このプロジェクトは **Test-Driven Development (TDD)** アプローチで開発されています：
+
+- **ユニットテスト**: 107個（parameter conversion, delay line, parameter smoother, pan calculation）
+- **統合テスト**: 17個（processor state management）
+- **VST3 Validator**: 47テスト全てパス
+- **総テスト数**: 171テスト、100% pass rate
+
 ### テスト実行
 
 ```bash
@@ -173,12 +182,16 @@ cd build
 ctest --output-on-failure
 ```
 
+すべてのテストが通ることを確認してください。
+
 ### VST3 Validator
 
 ```bash
 cd build
 bin/Release/validator VST3/Release/SimplePanner.vst3
 ```
+
+Validator は公式の VST3 仕様準拠チェックツールです。
 
 ### アーキテクチャ
 

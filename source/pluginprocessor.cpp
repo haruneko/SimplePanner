@@ -1,6 +1,7 @@
 #include "pluginprocessor.h"
 #include "plugids.h"
 #include "parameter_utils.h"
+#include "pan_calculator.h"
 
 #include "base/source/fstreamer.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
@@ -96,16 +97,77 @@ tresult PLUGIN_API SimplePannerProcessor::setActive(TBool state)
 //------------------------------------------------------------------------
 tresult PLUGIN_API SimplePannerProcessor::process(Vst::ProcessData& data)
 {
-    // TODO: パラメータ処理とオーディオ処理を実装 (Task 2.2)
-    // 現在は単純なバイパス処理のみ
+    // Process parameter changes
+    if (data.inputParameterChanges)
+    {
+        int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
+        for (int32 i = 0; i < numParamsChanged; i++)
+        {
+            Vst::IParamValueQueue* paramQueue = data.inputParameterChanges->getParameterData(i);
+            if (paramQueue)
+            {
+                Vst::ParamValue value;
+                int32 sampleOffset;
+                int32 numPoints = paramQueue->getPointCount();
 
+                // Get last point and update smoothers
+                if (numPoints > 0 && paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue)
+                {
+                    switch (paramQueue->getParameterId())
+                    {
+                        case kParamLeftPan:
+                            mLeftPan = value;
+                            mLeftPanSmoother.setTarget(static_cast<float>(value));
+                            break;
+                        case kParamLeftGain:
+                            mLeftGain = value;
+                            mLeftGainSmoother.setTarget(static_cast<float>(value));
+                            break;
+                        case kParamLeftDelay:
+                            mLeftDelay = value;
+                            if (mIsActive)
+                            {
+                                size_t delaySamples = delayMsToSamples(normalizedToDelayMs(value), mSampleRate);
+                                mDelayLeft.setDelay(delaySamples);
+                            }
+                            break;
+                        case kParamRightPan:
+                            mRightPan = value;
+                            mRightPanSmoother.setTarget(static_cast<float>(value));
+                            break;
+                        case kParamRightGain:
+                            mRightGain = value;
+                            mRightGainSmoother.setTarget(static_cast<float>(value));
+                            break;
+                        case kParamRightDelay:
+                            mRightDelay = value;
+                            if (mIsActive)
+                            {
+                                size_t delaySamples = delayMsToSamples(normalizedToDelayMs(value), mSampleRate);
+                                mDelayRight.setDelay(delaySamples);
+                            }
+                            break;
+                        case kParamMasterGain:
+                            mMasterGain = value;
+                            mMasterGainSmoother.setTarget(static_cast<float>(value));
+                            break;
+                        case kParamLinkGain:
+                            mLinkGain = value;
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Check for valid I/O
     if (data.numInputs == 0 || data.numOutputs == 0)
         return kResultOk;
 
     Vst::AudioBusBuffers& inputBus = data.inputs[0];
     Vst::AudioBusBuffers& outputBus = data.outputs[0];
 
-    // ステレオ処理
+    // Process stereo audio
     if (inputBus.numChannels >= 2 && outputBus.numChannels >= 2)
     {
         float* inL = inputBus.channelBuffers32[0];
@@ -113,11 +175,51 @@ tresult PLUGIN_API SimplePannerProcessor::process(Vst::ProcessData& data)
         float* outL = outputBus.channelBuffers32[0];
         float* outR = outputBus.channelBuffers32[1];
 
-        // シンプルなバイパス（入力をそのまま出力）
+        // Process each sample
         for (int32 i = 0; i < data.numSamples; i++)
         {
-            outL[i] = inL[i];
-            outR[i] = inR[i];
+            // Get smoothed parameter values (per-sample)
+            float leftPanNorm = mLeftPanSmoother.getNext();
+            float leftGainNorm = mLeftGainSmoother.getNext();
+            float rightPanNorm = mRightPanSmoother.getNext();
+            float rightGainNorm = mRightGainSmoother.getNext();
+            float masterGainNorm = mMasterGainSmoother.getNext();
+
+            // Convert normalized parameters to usable values
+            float leftPanValue = normalizedToPan(leftPanNorm);
+            float leftGainDb = normalizedToDb(leftGainNorm);
+            float leftGainLinear = dbToLinear(leftGainDb);
+
+            float rightPanValue = normalizedToPan(rightPanNorm);
+            float rightGainDb = normalizedToDb(rightGainNorm);
+            float rightGainLinear = dbToLinear(rightGainDb);
+
+            float masterGainDb = normalizedToDb(masterGainNorm);
+            float masterGainLinear = dbToLinear(masterGainDb);
+
+            // Calculate pan gains
+            PanGains leftPanGains = calculatePanGains(leftPanValue);
+            PanGains rightPanGains = calculatePanGains(rightPanValue);
+
+            // Read input samples
+            float inLeftSample = inL[i];
+            float inRightSample = inR[i];
+
+            // Apply delay
+            float delayedLeft = mDelayLeft.process(inLeftSample);
+            float delayedRight = mDelayRight.process(inRightSample);
+
+            // Apply gain
+            float gainedLeft = delayedLeft * leftGainLinear;
+            float gainedRight = delayedRight * rightGainLinear;
+
+            // Apply panning and mix
+            float mixedLeft = gainedLeft * leftPanGains.left + gainedRight * rightPanGains.left;
+            float mixedRight = gainedLeft * leftPanGains.right + gainedRight * rightPanGains.right;
+
+            // Apply master gain
+            outL[i] = mixedLeft * masterGainLinear;
+            outR[i] = mixedRight * masterGainLinear;
         }
     }
 
