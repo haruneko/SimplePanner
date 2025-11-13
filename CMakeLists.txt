@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.14.0)
 
 project(SimplePanner VERSION 1.0.0)
 
+# Enable Objective-C++ for macOS VSTGUI support
+if(APPLE)
+    enable_language(OBJCXX)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -33,7 +38,7 @@ endif()
 # VST3 SDK のオプションを設定（サンプルやホスティングをビルドしない）
 set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "")
 set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES OFF CACHE BOOL "")
-set(SMTG_ENABLE_VSTGUI_SUPPORT OFF CACHE BOOL "")
+set(SMTG_ENABLE_VSTGUI_SUPPORT ON CACHE BOOL "")
 
 # VST3 SDK を追加
 add_subdirectory(${VST3_SDK_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vst3sdk)
@@ -42,12 +47,33 @@ add_subdirectory(${VST3_SDK_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/vst3sdk)
 set(PLUGIN_SOURCES
     source/pluginprocessor.cpp
     source/plugincontroller.cpp
+    source/plugineditor.cpp
     source/pluginfactory.cpp
+    ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
 )
+
+# プラットフォーム固有のエントリポイント
+if(SMTG_LINUX)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+elseif(SMTG_WIN)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+elseif(SMTG_MAC)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+endif()
 
 set(PLUGIN_HEADERS
     include/pluginprocessor.h
     include/plugincontroller.h
+    include/plugineditor.h
     include/plugids.h
 )
 
@@ -57,30 +83,18 @@ smtg_add_vst3plugin(SimplePanner
     ${PLUGIN_HEADERS}
 )
 
-# プラットフォーム固有のエントリポイントを追加
-if(SMTG_LINUX)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
-    )
-elseif(SMTG_WIN)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
-    )
-elseif(SMTG_MAC)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
-    )
-endif()
-
 # インクルードディレクトリを追加
 target_include_directories(SimplePanner PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${VST3_SDK_ROOT}
+    ${VST3_SDK_ROOT}/vstgui4
 )
 
 # VST3 SDKのライブラリをリンク
 target_link_libraries(SimplePanner PRIVATE
     sdk
+    vstgui
+    vstgui_support
 )
 
 # プラグインの情報を設定

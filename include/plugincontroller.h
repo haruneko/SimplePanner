@@ -20,6 +20,7 @@ public:
     tresult PLUGIN_API terminate() SMTG_OVERRIDE;
     tresult PLUGIN_API setComponentState(IBStream* state) SMTG_OVERRIDE;
     tresult PLUGIN_API setParamNormalized(Vst::ParamID tag, Vst::ParamValue value) SMTG_OVERRIDE;
+    IPlugView* PLUGIN_API createView(const char* name) SMTG_OVERRIDE;
 
     // Create function
     static FUnknown* createInstance(void* /*context*/)

@@ -35,13 +35,5 @@ BEGIN_FACTORY_DEF(PLUGIN_VENDOR, PLUGIN_URL, PLUGIN_EMAIL)
 END_FACTORY
 
 //------------------------------------------------------------------------
-bool InitModule()
-{
-    return true;
-}
-
-//------------------------------------------------------------------------
-bool DeinitModule()
-{
-    return true;
-}
+// Note: InitModule() and DeinitModule() are now provided by moduleinit.cpp
+// which is required for VSTGUI module initialization
