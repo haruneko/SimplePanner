@@ -167,6 +167,34 @@ bool SimplePannerEditor::createUI()
         mLeftPanLabel->setText(formatPanValue(panValue).c_str());
     }
 
+    // Left Gain Label
+    CRect leftGainLabelRect(110, 85, 170, 100);
+    mLeftGainLabel = new CTextLabel(leftGainLabelRect, "0.0 dB");
+    mLeftGainLabel->setFont(kNormalFont);
+    mLeftGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mLeftGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mLeftGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mLeftGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(mLeftGainLabel);
+
+    // Left Gain Knob (60x60px)
+    CRect leftGainKnobRect(110, 105, 170, 165);
+    mLeftGainKnob = new CKnob(leftGainKnobRect, this, kParamLeftGain, nullptr, nullptr);
+    mLeftGainKnob->setMin(0.0f);
+    mLeftGainKnob->setMax(1.0f);
+    mLeftGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mLeftGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    leftGroup->addView(mLeftGainKnob);
+
+    // Initialize Left Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamLeftGain);
+        mLeftGainKnob->setValue(gainValue);
+        mLeftGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
+
     // === Right Channel Group ===
     CRect rightGroupRect(320, 40, 580, 220);
     CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
@@ -213,6 +241,34 @@ bool SimplePannerEditor::createUI()
         mRightPanLabel->setText(formatPanValue(panValue).c_str());
     }
 
+    // Right Gain Label
+    CRect rightGainLabelRect(100, 85, 160, 100);
+    mRightGainLabel = new CTextLabel(rightGainLabelRect, "0.0 dB");
+    mRightGainLabel->setFont(kNormalFont);
+    mRightGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mRightGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mRightGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mRightGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(mRightGainLabel);
+
+    // Right Gain Knob (60x60px)
+    CRect rightGainKnobRect(100, 105, 160, 165);
+    mRightGainKnob = new CKnob(rightGainKnobRect, this, kParamRightGain, nullptr, nullptr);
+    mRightGainKnob->setMin(0.0f);
+    mRightGainKnob->setMax(1.0f);
+    mRightGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mRightGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    rightGroup->addView(mRightGainKnob);
+
+    // Initialize Right Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamRightGain);
+        mRightGainKnob->setValue(gainValue);
+        mRightGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
+
     // === Master Section ===
     CRect masterRect(20, 240, 580, 360);
     CViewContainer* masterGroup = new CViewContainer(masterRect);
@@ -232,7 +288,33 @@ bool SimplePannerEditor::createUI()
     masterTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
     masterGroup->addView(masterTitle);
 
-    // TODO: Add GUI controls in subsequent tasks
+    // Master Gain Label
+    CRect masterGainLabelRect(250, 35, 310, 50);
+    mMasterGainLabel = new CTextLabel(masterGainLabelRect, "0.0 dB");
+    mMasterGainLabel->setFont(kNormalFont);
+    mMasterGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mMasterGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mMasterGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mMasterGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mMasterGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    masterGroup->addView(mMasterGainLabel);
+
+    // Master Gain Knob (60x60px)
+    CRect masterGainKnobRect(250, 55, 310, 115);
+    mMasterGainKnob = new CKnob(masterGainKnobRect, this, kParamMasterGain, nullptr, nullptr);
+    mMasterGainKnob->setMin(0.0f);
+    mMasterGainKnob->setMax(1.0f);
+    mMasterGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mMasterGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    masterGroup->addView(mMasterGainKnob);
+
+    // Initialize Master Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamMasterGain);
+        mMasterGainKnob->setValue(gainValue);
+        mMasterGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
 
     return true;
 }
