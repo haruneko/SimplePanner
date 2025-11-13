@@ -165,6 +165,227 @@ namespace ParamDefault {
 } // namespace Steinberg
 ```
 
+### 3.3 GUI Editor Design
+
+#### 3.3.1 Editor Class Structure
+
+```
+┌────────────────────────┐
+│  Vst::EditorView       │
+└───────────┬────────────┘
+            │ inherits
+┌───────────▼────────────────────────────────────┐
+│       SimplePannerEditor                       │
+├────────────────────────────────────────────────┤
+│ - VSTGUI::CFrame* frame                        │
+│ - VSTGUI::CSlider* leftPanSlider               │
+│ - VSTGUI::CSlider* rightPanSlider              │
+│ - VSTGUI::CKnob* leftGainKnob                  │
+│ - VSTGUI::CKnob* rightGainKnob                 │
+│ - VSTGUI::CKnob* leftDelayKnob                 │
+│ - VSTGUI::CKnob* rightDelayKnob                │
+│ - VSTGUI::CKnob* masterGainKnob                │
+│ - VSTGUI::CTextButton* linkToggle              │
+│ - VSTGUI::CTextLabel* valueLabels[8]           │
+│ - EditController* controller                   │
+├────────────────────────────────────────────────┤
+│ + SimplePannerEditor(controller)               │
+│ + ~SimplePannerEditor()                        │
+│ + open(parent)                                 │
+│ + close()                                      │
+│ + getRect(size)                                │
+│ + valueChanged(control)                        │
+│ + controlBeginEdit(tag)                        │
+│ + controlEndEdit(tag)                          │
+│ - createUI()                                   │
+│ - updateValueDisplay(tag)                      │
+│ - formatPanValue(value) -> string              │
+│ - formatGainValue(value) -> string             │
+│ - formatDelayValue(value) -> string            │
+└────────────────────────────────────────────────┘
+```
+
+#### 3.3.2 VSTGUI Control Hierarchy
+
+```
+CFrame (600x400px)
+ │
+ ├─ CViewContainer (Left Channel Group, 280x180px)
+ │   ├─ CTextLabel ("LEFT CHANNEL")
+ │   ├─ CSlider (Pan, 200x30px, horizontal)
+ │   ├─ CTextLabel (Pan value display, e.g., "L50")
+ │   ├─ CKnob (Gain, 60x60px)
+ │   ├─ CTextLabel (Gain value display, e.g., "-3.0 dB")
+ │   ├─ CKnob (Delay, 60x60px)
+ │   └─ CTextLabel (Delay value display, e.g., "10.0 ms")
+ │
+ ├─ CViewContainer (Right Channel Group, 280x180px)
+ │   ├─ CTextLabel ("RIGHT CHANNEL")
+ │   ├─ CSlider (Pan, 200x30px, horizontal)
+ │   ├─ CTextLabel (Pan value display, e.g., "R75")
+ │   ├─ CKnob (Gain, 60x60px)
+ │   ├─ CTextLabel (Gain value display, e.g., "0.0 dB")
+ │   ├─ CKnob (Delay, 60x60px)
+ │   └─ CTextLabel (Delay value display, e.g., "0.0 ms")
+ │
+ └─ CViewContainer (Master Section, 560x120px)
+     ├─ CTextLabel ("MASTER")
+     ├─ CKnob (Master Gain, 60x60px)
+     ├─ CTextLabel (Master Gain value display, e.g., "0.0 dB")
+     ├─ CTextButton (Link L/R Gain toggle, 80x25px)
+     └─ CTextLabel ("Link L/R Gain")
+```
+
+#### 3.3.3 GUI Implementation Details
+
+##### Control Configuration
+
+**Pan Sliders**:
+```cpp
+CSlider* slider = new CSlider(
+    CRect(x, y, x+200, y+30),           // Position and size
+    this,                                // Listener
+    kParamLeftPan,                       // Tag (parameter ID)
+    x, x+200,                            // Min/max X
+    nullptr,                             // Handle bitmap (nullptr = default)
+    nullptr,                             // Background bitmap (nullptr = default)
+    CPoint(0, 0),                        // Offset
+    kHorizontal                          // Orientation
+);
+slider->setDefaultValue(0.0f);           // Center for left, 1.0 for right
+slider->setMin(0.0f);
+slider->setMax(1.0f);
+```
+
+**Gain/Delay Knobs**:
+```cpp
+CKnob* knob = new CKnob(
+    CRect(x, y, x+60, y+60),             // Position and size
+    this,                                // Listener
+    kParamLeftGain,                      // Tag (parameter ID)
+    nullptr,                             // Background bitmap (nullptr = default draw)
+    nullptr,                             // Handle bitmap (nullptr = default)
+    CPoint(0, 0)                         // Offset
+);
+knob->setMin(0.0f);
+knob->setMax(1.0f);
+knob->setDefaultValue(dbToNormalized(0.0f));  // 0dB
+knob->setZoomFactor(10.0f);              // Shift+drag for fine adjustment
+```
+
+**Link Toggle Button**:
+```cpp
+CTextButton* toggle = new CTextButton(
+    CRect(x, y, x+80, y+25),
+    this,
+    kParamLinkGain,
+    "LINKED",                            // Text when ON
+    CTextButton::kOnOffStyle
+);
+toggle->setTextColorOff(CColor(200, 200, 200, 255));
+toggle->setTextColorOn(CColor(255, 255, 255, 255));
+toggle->setGradientOff(CColor(100, 100, 100, 255));
+toggle->setGradientOn(CColor(76, 175, 80, 255));  // Green
+```
+
+##### Value Display Formatting
+
+```cpp
+std::string SimplePannerEditor::formatPanValue(float normalized) {
+    float pan = normalizedToPan(normalized);
+    if (std::abs(pan) < 0.5f) {
+        return "C";  // Center
+    } else if (pan < 0) {
+        return "L" + std::to_string(static_cast<int>(std::abs(pan)));
+    } else {
+        return "R" + std::to_string(static_cast<int>(pan));
+    }
+}
+
+std::string SimplePannerEditor::formatGainValue(float normalized) {
+    float db = normalizedToDb(normalized);
+    if (db <= -60.0f) {
+        return "-∞ dB";
+    } else {
+        char buf[16];
+        snprintf(buf, sizeof(buf), "%+.1f dB", db);
+        return std::string(buf);
+    }
+}
+
+std::string SimplePannerEditor::formatDelayValue(float normalized) {
+    float ms = normalizedToDelayMs(normalized);
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%.1f ms", ms);
+    return std::string(buf);
+}
+```
+
+#### 3.3.4 Parameter Update Flow
+
+```
+User interacts with control
+        │
+        ├─ valueChanged(control) called
+        │       │
+        │       ├─ Get normalized value from control
+        │       ├─ controller->setParamNormalized(tag, value)
+        │       │       │
+        │       │       ├─ Controller validates and stores value
+        │       │       ├─ Link L/R Gain logic applied (if enabled)
+        │       │       └─ Controller notifies Processor via parameter queue
+        │       │
+        │       └─ updateValueDisplay(tag)
+        │               │
+        │               └─ Format and display value string
+        │
+        └─ controlEndEdit(tag) called
+                │
+                └─ End parameter automation recording (if active)
+```
+
+#### 3.3.5 Colors and Styling
+
+```cpp
+namespace Colors {
+    const CColor kBackground(44, 44, 44, 255);          // #2C2C2C
+    const CColor kGroupBox(60, 60, 60, 255);            // #3C3C3C
+    const CColor kLabelText(204, 204, 204, 255);        // #CCCCCC
+    const CColor kValueText(255, 255, 255, 255);        // #FFFFFF
+    const CColor kKnobBody(80, 80, 80, 255);            // #505050
+    const CColor kKnobIndicator(74, 144, 226, 255);     // #4A90E2
+    const CColor kSliderTrack(64, 64, 64, 255);         // #404040
+    const CColor kSliderHandle(74, 144, 226, 255);      // #4A90E2
+    const CColor kToggleOn(76, 175, 80, 255);           // #4CAF50
+    const CColor kToggleOff(96, 96, 96, 255);           // #606060
+}
+```
+
+#### 3.3.6 Layout Coordinates
+
+```cpp
+// Window dimensions
+constexpr int32 kEditorWidth = 600;
+constexpr int32 kEditorHeight = 400;
+
+// Margins and spacing
+constexpr int32 kMargin = 20;
+constexpr int32 kGroupPadding = 15;
+constexpr int32 kControlSpacing = 20;
+
+// Group boxes
+constexpr CRect kLeftChannelBox(20, 40, 300, 220);
+constexpr CRect kRightChannelBox(320, 40, 580, 220);
+constexpr CRect kMasterBox(20, 240, 580, 360);
+
+// Control sizes
+constexpr int32 kSliderWidth = 200;
+constexpr int32 kSliderHeight = 30;
+constexpr int32 kKnobSize = 60;
+constexpr int32 kToggleWidth = 80;
+constexpr int32 kToggleHeight = 25;
+```
+
 ## 4. Data Structures
 
 ### 4.1 Processor State
@@ -813,10 +1034,23 @@ tresult SimplePannerProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 - [ ] Sample rate change handling
 
 ### Phase 4: Polish & Testing
-- [ ] VST3 validator compliance
+- [✅] VST3 validator compliance
 - [ ] Performance optimization
-- [ ] Documentation
+- [✅] Documentation
 - [ ] DAW compatibility testing
+
+### Phase 5: GUI Implementation
+- [ ] SimplePannerEditor class skeleton
+- [ ] VSTGUI integration and CFrame setup
+- [ ] Pan sliders implementation (Left/Right)
+- [ ] Gain knobs implementation (Left/Right/Master)
+- [ ] Delay knobs implementation (Left/Right)
+- [ ] Link L/R Gain toggle button
+- [ ] Value display labels and formatting
+- [ ] Color scheme and visual styling
+- [ ] Controller integration (createView override)
+- [ ] Parameter synchronization (GUI ↔ Controller)
+- [ ] GUI testing in multiple DAWs
 
 ## 14. Open Questions / Design Decisions
 
@@ -834,6 +1068,10 @@ tresult SimplePannerProcessor::setupProcessing(Vst::ProcessSetup& setup) {
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Last Updated**: 2025-11-13
-**Status**: Ready for Implementation
+**Status**: Core Complete, GUI Implementation Planned
+
+**Revision History**:
+- v1.0 (2025-11-13): Initial design document
+- v1.1 (2025-11-13): Added Section 3.3 GUI Editor Design, Phase 5 GUI Implementation
