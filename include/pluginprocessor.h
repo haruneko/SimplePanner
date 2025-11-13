@@ -1,6 +1,8 @@
 #pragma once
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
+#include "delay_line.h"
+#include "parameter_smoother.h"
 
 namespace Steinberg {
 namespace SimplePanner {
@@ -31,10 +33,30 @@ public:
     }
 
 protected:
-    // TODO: メンバー変数を追加（Task 1.4で実装）
-    // - DelayLine mDelayLeft, mDelayRight
-    // - ParameterSmoother instances
-    // - Parameter values
+    // Delay lines
+    DelayLine mDelayLeft;
+    DelayLine mDelayRight;
+
+    // Parameter smoothers
+    ParameterSmoother mLeftPanSmoother;
+    ParameterSmoother mLeftGainSmoother;
+    ParameterSmoother mRightPanSmoother;
+    ParameterSmoother mRightGainSmoother;
+    ParameterSmoother mMasterGainSmoother;
+
+    // Current parameter values (normalized 0.0 - 1.0)
+    double mLeftPan;
+    double mLeftGain;
+    double mLeftDelay;
+    double mRightPan;
+    double mRightGain;
+    double mRightDelay;
+    double mMasterGain;
+    double mLinkGain;
+
+    // Processing state
+    double mSampleRate;
+    bool mIsActive;
 };
 
 } // namespace SimplePanner

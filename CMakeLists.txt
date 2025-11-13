@@ -143,3 +143,41 @@ add_simple_panner_test(test_parameter_conversion
 add_simple_panner_test(test_delay_line
     tests/unit/test_delay_line.cpp
 )
+
+add_simple_panner_test(test_parameter_smoother
+    tests/unit/test_parameter_smoother.cpp
+)
+
+#------------------------------------------------------------------------
+# Integration Tests
+#------------------------------------------------------------------------
+function(add_simple_panner_integration_test test_name test_file)
+    add_executable(${test_name}
+        ${test_file}
+        source/pluginprocessor.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/common/memorystream.cpp
+    )
+    target_link_libraries(${test_name} PRIVATE
+        gtest_main
+        sdk
+        pluginterfaces
+        base
+    )
+    target_include_directories(${test_name} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${VST3_SDK_ROOT}
+    )
+
+    # macOS specific: Link CoreFoundation framework
+    if(APPLE)
+        target_link_libraries(${test_name} PRIVATE
+            "-framework CoreFoundation"
+        )
+    endif()
+
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
+
+add_simple_panner_integration_test(test_processor_state
+    tests/integration/test_processor_state.cpp
+)
