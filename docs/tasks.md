@@ -42,6 +42,18 @@
 - [✅] Task 4.4: Documentation Update (README.md updated with test statistics)
 - [✅] Task 4.5: Final Integration Test (All automated tests passing: 171/171)
 
+### Phase 5: GUI Implementation (Planned)
+- [ ] Task 5.1: Editor Class Skeleton (SimplePannerEditor, createView)
+- [ ] Task 5.2: Layout and Group Boxes (3 containers: L/R/Master)
+- [ ] Task 5.3: Pan Sliders Implementation (Left/Right, formatPanValue)
+- [ ] Task 5.4: Gain Knobs Implementation (L/R/Master, formatGainValue, double-click reset)
+- [ ] Task 5.5: Delay Knobs Implementation (Left/Right, formatDelayValue)
+- [ ] Task 5.6: Link L/R Gain Toggle (Button with ON/OFF styling)
+- [ ] Task 5.7: Parameter Synchronization (bidirectional GUI ↔ Controller)
+- [ ] Task 5.8: Visual Polish and Styling (colors, fonts, hover effects)
+- [ ] Task 5.9: GUI Testing (controls, platform, DAW compatibility)
+- [ ] Task 5.10: GUI Documentation (README, user manual, dev docs)
+
 ### Test Summary
 - **Unit Tests**: 107 passing (conversion: 35, delay: 18, smoother: 20, pan: 17, others: 17)
 - **Integration Tests**: 17 passing (processor state management)
@@ -776,6 +788,330 @@
 
 ---
 
+### Phase 5: GUI Implementation
+
+#### Task 5.1: Editor Class Skeleton
+**Priority**: P0 (Critical)
+**Estimated Time**: 3 hours
+**Dependencies**: Task 1.5 (Controller)
+
+**Implementation Tasks**:
+- [ ] 5.1.1 **IMPL**: `include/plugineditor.h` を作成
+  - SimplePannerEditor クラス定義
+  - Vst::EditorView を継承
+  - VSTGUI::CFrame* frame メンバー
+  - 全コントロールのポインタメンバー変数
+  - open(), close(), getRect() メソッド宣言
+- [ ] 5.1.2 **IMPL**: `source/plugineditor.cpp` を作成
+  - コンストラクタ/デストラクタ実装
+  - open(): CFrame 作成と基本設定
+  - close(): リソース解放
+  - getRect(): 600x400px を返す
+- [ ] 5.1.3 **IMPL**: `source/plugincontroller.cpp` を更新
+  - createView() メソッドをオーバーライド
+  - SimplePannerEditor インスタンスを返す
+
+**Verification Tasks**:
+- [ ] 5.1.4 **VERIFY**: ビルドが成功する
+- [ ] 5.1.5 **VERIFY**: DAWでプラグインを開いて空のウィンドウ（600x400px）が表示される
+
+**Completion Criteria**:
+- 空のGUIウィンドウが開閉できる
+- クラッシュしない
+- 正しいサイズで表示される
+
+---
+
+#### Task 5.2: Layout and Group Boxes
+**Priority**: P0 (Critical)
+**Estimated Time**: 2 hours
+**Dependencies**: Task 5.1
+
+**Implementation Tasks**:
+- [ ] 5.2.1 **IMPL**: `createUI()` プライベートメソッドを実装
+  - CFrame に背景色を設定 (#2C2C2C)
+  - 3つの CViewContainer を作成
+    - Left Channel Group (20, 40, 300, 220)
+    - Right Channel Group (320, 40, 580, 220)
+    - Master Section (20, 240, 580, 360)
+  - グループボックスの背景色と枠線を設定 (#3C3C3C)
+- [ ] 5.2.2 **IMPL**: グループタイトルラベルを追加
+  - "LEFT CHANNEL", "RIGHT CHANNEL", "MASTER"
+  - フォント: 14pt, Bold
+  - 色: #CCCCCC
+
+**Verification Tasks**:
+- [ ] 5.2.3 **VERIFY**: 3つのグループボックスが正しく表示される
+- [ ] 5.2.4 **VERIFY**: タイトルラベルが見える
+
+**Completion Criteria**:
+- GUIレイアウトの骨格が完成
+- グループ分けが視覚的に分かる
+
+---
+
+#### Task 5.3: Pan Sliders Implementation
+**Priority**: P0 (Critical)
+**Estimated Time**: 3 hours
+**Dependencies**: Task 5.2
+
+**Implementation Tasks**:
+- [ ] 5.3.1 **IMPL**: Left Pan スライダーを追加
+  - CSlider インスタンス作成 (200x30px, horizontal)
+  - kParamLeftPan をタグとして設定
+  - デフォルト値: 0.0 (Full Left = -100)
+  - Left Channel グループ内に配置
+- [ ] 5.3.2 **IMPL**: Right Pan スライダーを追加
+  - CSlider インスタンス作成
+  - kParamRightPan をタグとして設定
+  - デフォルト値: 1.0 (Full Right = +100)
+  - Right Channel グループ内に配置
+- [ ] 5.3.3 **IMPL**: スライダー値表示ラベルを追加
+  - formatPanValue() ヘルパー関数実装
+  - CTextLabel で値を表示 (例: "L100", "C", "R50")
+  - スライダー上部に配置
+- [ ] 5.3.4 **IMPL**: valueChanged() コールバック実装
+  - コントロールからnormalized値を取得
+  - controller->setParamNormalized() を呼び出し
+  - 値表示ラベルを更新
+
+**Verification Tasks**:
+- [ ] 5.3.5 **VERIFY**: スライダーがマウスで操作できる
+- [ ] 5.3.6 **VERIFY**: 値表示が正しく更新される ("L100"～"C"～"R100")
+- [ ] 5.3.7 **VERIFY**: パラメータがControllerに伝わる
+
+**Completion Criteria**:
+- Pan スライダーが動作する
+- 値表示が正しいフォーマット
+- DAWのオートメーションで動く
+
+---
+
+#### Task 5.4: Gain Knobs Implementation
+**Priority**: P0 (Critical)
+**Estimated Time**: 4 hours
+**Dependencies**: Task 5.3
+
+**Implementation Tasks**:
+- [ ] 5.4.1 **IMPL**: Left Gain ノブを追加
+  - CKnob インスタンス作成 (60x60px)
+  - kParamLeftGain をタグとして設定
+  - デフォルト値: dbToNormalized(0.0f)
+  - 回転範囲: 270°
+- [ ] 5.4.2 **IMPL**: Right Gain ノブを追加
+  - 同様に実装
+- [ ] 5.4.3 **IMPL**: Master Gain ノブを追加
+  - Master セクションに配置
+- [ ] 5.4.4 **IMPL**: Gain 値表示ラベルを追加
+  - formatGainValue() ヘルパー関数実装
+  - "-∞ dB" または "±X.X dB" 形式
+  - ノブの下に配置
+- [ ] 5.4.5 **IMPL**: ノブスタイリング設定
+  - 本体色: #505050
+  - インジケーター色: #4A90E2
+  - Shift+ドラッグで微調整 (setZoomFactor(10.0f))
+- [ ] 5.4.6 **IMPL**: ダブルクリックでリセット機能
+  - setDefaultValue() 設定
+  - onMouseDown() でダブルクリック検出
+
+**Verification Tasks**:
+- [ ] 5.4.7 **VERIFY**: 3つのGain ノブが操作できる
+- [ ] 5.4.8 **VERIFY**: 値表示が "-∞ dB" から "+6.0 dB" まで正しく表示
+- [ ] 5.4.9 **VERIFY**: Shift+ドラッグで微調整できる
+- [ ] 5.4.10 **VERIFY**: ダブルクリックで 0dB にリセット
+
+**Completion Criteria**:
+- 全Gain ノブが動作する
+- 値フォーマットが仕様通り
+- 操作性が良好
+
+---
+
+#### Task 5.5: Delay Knobs Implementation
+**Priority**: P0 (Critical)
+**Estimated Time**: 2 hours
+**Dependencies**: Task 5.4
+
+**Implementation Tasks**:
+- [ ] 5.5.1 **IMPL**: Left Delay ノブを追加
+  - CKnob インスタンス作成 (60x60px)
+  - kParamLeftDelay をタグとして設定
+  - デフォルト値: 0.0 (0ms)
+- [ ] 5.5.2 **IMPL**: Right Delay ノブを追加
+  - 同様に実装
+- [ ] 5.5.3 **IMPL**: Delay 値表示ラベルを追加
+  - formatDelayValue() ヘルパー関数実装
+  - "X.X ms" 形式 (0.0ms ～ 100.0ms)
+  - ノブの下に配置
+
+**Verification Tasks**:
+- [ ] 5.5.4 **VERIFY**: 2つのDelay ノブが操作できる
+- [ ] 5.5.5 **VERIFY**: 値表示が "0.0 ms" から "100.0 ms" まで正しく表示
+- [ ] 5.5.6 **VERIFY**: 実際にオーディオが遅延する
+
+**Completion Criteria**:
+- Delay ノブが動作する
+- 値フォーマットが仕様通り
+- オーディオ処理に反映される
+
+---
+
+#### Task 5.6: Link L/R Gain Toggle
+**Priority**: P1 (High)
+**Estimated Time**: 2 hours
+**Dependencies**: Task 5.4
+
+**Implementation Tasks**:
+- [ ] 5.6.1 **IMPL**: Link Toggle ボタンを追加
+  - CTextButton インスタンス作成 (80x25px)
+  - kParamLinkGain をタグとして設定
+  - テキスト: "UNLINKED" (OFF) / "LINKED" (ON)
+  - スタイル: kOnOffStyle
+- [ ] 5.6.2 **IMPL**: トグルボタンのスタイリング
+  - OFF: Gray (#606060), text "UNLINKED"
+  - ON: Green (#4CAF50), text "LINKED"
+  - Master セクションに配置
+- [ ] 5.6.3 **IMPL**: valueChanged() でトグル状態を処理
+  - controller->setParamNormalized() 呼び出し
+  - Controllerの Link Gain ロジックが動作することを確認
+
+**Verification Tasks**:
+- [ ] 5.6.4 **VERIFY**: トグルボタンがクリックで ON/OFF 切り替わる
+- [ ] 5.6.5 **VERIFY**: ON時に Left/Right Gain が連動する
+- [ ] 5.6.6 **VERIFY**: OFF時に独立して動作する
+- [ ] 5.6.7 **VERIFY**: 視覚的フィードバックが分かりやすい
+
+**Completion Criteria**:
+- Link Toggle が動作する
+- Gain連動機能が正しく動く
+- 視覚的に状態が分かる
+
+---
+
+#### Task 5.7: Parameter Synchronization
+**Priority**: P0 (Critical)
+**Estimated Time**: 3 hours
+**Dependencies**: Task 5.3, 5.4, 5.5, 5.6
+
+**Implementation Tasks**:
+- [ ] 5.7.1 **IMPL**: controlBeginEdit() 実装
+  - beginEdit(tag) をControllerに通知
+  - DAWのオートメーション記録開始
+- [ ] 5.7.2 **IMPL**: controlEndEdit() 実装
+  - endEdit(tag) をControllerに通知
+  - DAWのオートメーション記録終了
+- [ ] 5.7.3 **IMPL**: GUI → Controller の同期確認
+  - 全パラメータが正しく伝わることを確認
+- [ ] 5.7.4 **IMPL**: Controller → GUI の同期実装
+  - DAWオートメーションでパラメータが変わったときGUIを更新
+  - IParameterFinder 使用
+  - 各コントロールの値を更新
+
+**Verification Tasks**:
+- [ ] 5.7.5 **VERIFY**: GUI操作がProcessorに反映される
+- [ ] 5.7.6 **VERIFY**: DAWオートメーションでGUIが更新される
+- [ ] 5.7.7 **VERIFY**: プロジェクト保存・読み込みでGUI状態が復元される
+
+**Completion Criteria**:
+- 双方向パラメータ同期が動作
+- オートメーション対応完了
+- 状態保存・復元が完璧
+
+---
+
+#### Task 5.8: Visual Polish and Styling
+**Priority**: P2 (Medium)
+**Estimated Time**: 3 hours
+**Dependencies**: Task 5.7
+
+**Implementation Tasks**:
+- [ ] 5.8.1 **IMPL**: 色テーマの最終調整
+  - 全コントロールに統一カラースキーム適用
+  - ホバー効果追加 (10% lighter)
+  - アクティブ時のハイライト
+- [ ] 5.8.2 **IMPL**: フォント設定の統一
+  - ラベル: 12pt, Normal
+  - 値表示: 11pt, Bold
+  - グループタイトル: 14pt, Bold
+- [ ] 5.8.3 **IMPL**: 配置とスペーシングの微調整
+  - 全コントロールの位置を最終調整
+  - 視覚的バランスを確認
+- [ ] 5.8.4 **IMPL**: "L" / "R" ラベルをPanスライダーに追加
+  - スライダーの左右に "L" と "R" 表示
+
+**Verification Tasks**:
+- [ ] 5.8.5 **VERIFY**: 見た目がプロフェッショナル
+- [ ] 5.8.6 **VERIFY**: 色の統一感がある
+- [ ] 5.8.7 **VERIFY**: 読みやすいフォントサイズ
+
+**Completion Criteria**:
+- GUIが美しく仕上がっている
+- ユーザビリティが高い
+- ブランディングが統一
+
+---
+
+#### Task 5.9: GUI Testing
+**Priority**: P0 (Critical)
+**Estimated Time**: 4 hours
+**Dependencies**: Task 5.8
+
+**Test Tasks**:
+- [ ] 5.9.1 **TEST**: 全コントロール動作テスト
+  - 各スライダー、ノブ、トグルを操作
+  - 値が正しく変化することを確認
+  - 値表示が更新されることを確認
+- [ ] 5.9.2 **TEST**: 特殊操作テスト
+  - ダブルクリックリセット
+  - Shift+ドラッグ微調整
+  - マウスホイール（サポートされる場合）
+- [ ] 5.9.3 **TEST**: GUI開閉テスト
+  - 10回以上開閉してクラッシュしない
+  - リソースリークがない
+- [ ] 5.9.4 **TEST**: プラットフォームテスト
+  - Windows: 正しく表示・動作
+  - macOS: 正しく表示・動作（可能であれば）
+  - Linux: 正しく表示・動作（可能であれば）
+- [ ] 5.9.5 **TEST**: DAW互換性テスト
+  - Reaper: GUI表示・操作確認
+  - その他DAW: 可能な範囲で確認
+
+**Verification Tasks**:
+- [ ] 5.9.6 **VERIFY**: 全GUIテストがパス
+- [ ] 5.9.7 **VERIFY**: クリティカルなバグが存在しない
+- [ ] 5.9.8 **VERIFY**: requirements.md Section 7.2 GUI Requirements を全て満たす
+
+**Completion Criteria**:
+- GUI が安定して動作
+- 全プラットフォームで表示確認
+- 実用レベルの品質
+
+---
+
+#### Task 5.10: GUI Documentation
+**Priority**: P1 (High)
+**Estimated Time**: 2 hours
+**Dependencies**: Task 5.9
+
+**Documentation Tasks**:
+- [ ] 5.10.1 **DOC**: README.md を更新
+  - GUI スクリーンショット追加（可能であれば）
+  - 操作方法の追記
+- [ ] 5.10.2 **DOC**: User manual 更新
+  - GUI操作ガイド追加
+  - ダブルクリックリセット、Shift+ドラッグの説明
+- [ ] 5.10.3 **DOC**: Developer docs 更新
+  - GUI実装の概要
+  - VSTGUIの使い方
+  - 新しいコントロール追加方法
+
+**Completion Criteria**:
+- ドキュメントがGUI実装を反映
+- ユーザーがGUIを理解できる
+- 開発者がGUIを拡張できる
+
+---
+
 ## Test Infrastructure Setup
 
 ### CMake Test Configuration
@@ -846,17 +1182,23 @@ enable_testing()
 
 ## Estimated Total Time
 
-| Phase | Estimated Time |
-|-------|----------------|
-| Phase 0: Setup | 0.5 hours |
-| Phase 1: Core Infrastructure | 14 hours |
-| Phase 2: DSP Implementation | 9 hours |
-| Phase 3: Advanced Features | 5.5 hours |
-| Phase 4: Polish & Testing | 11 hours |
-| **Total** | **40 hours** |
+| Phase | Estimated Time | Status |
+|-------|----------------|--------|
+| Phase 0: Setup | 0.5 hours | ✅ Complete |
+| Phase 1: Core Infrastructure | 14 hours | ✅ Complete |
+| Phase 2: DSP Implementation | 9 hours | ✅ Complete |
+| Phase 3: Advanced Features | 5.5 hours | ✅ Complete |
+| Phase 4: Polish & Testing | 11 hours | 🔄 Partial (Core complete) |
+| Phase 5: GUI Implementation | 28 hours | ⏸️ Planned |
+| **Total (Phases 0-4)** | **40 hours** | |
+| **Total (with Phase 5)** | **68 hours** | |
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Last Updated**: 2025-11-13
-**Status**: Ready to Start
+**Status**: Core Complete, GUI Planned
+
+**Revision History**:
+- v1.0 (2025-11-13): Initial task specification
+- v1.1 (2025-11-13): Added Phase 5 GUI Implementation (10 tasks, 28 hours estimated)
