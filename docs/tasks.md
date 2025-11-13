@@ -857,7 +857,7 @@
 
 **Implementation Tasks**:
 - [ ] 5.3.1 **IMPL**: Left Pan スライダーを追加
-  - CSlider インスタンス作成 (200x30px, horizontal)
+  - CSlider インスタンス作成 (200x15px, horizontal)
   - kParamLeftPan をタグとして設定
   - デフォルト値: 0.0 (Full Left = -100)
   - Left Channel グループ内に配置

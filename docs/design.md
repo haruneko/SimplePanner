@@ -212,7 +212,7 @@ CFrame (600x400px)
  │
  ├─ CViewContainer (Left Channel Group, 280x180px)
  │   ├─ CTextLabel ("LEFT CHANNEL")
- │   ├─ CSlider (Pan, 200x30px, horizontal)
+ │   ├─ CSlider (Pan, 200x15px, horizontal)
  │   ├─ CTextLabel (Pan value display, e.g., "L50")
  │   ├─ CKnob (Gain, 60x60px)
  │   ├─ CTextLabel (Gain value display, e.g., "-3.0 dB")
@@ -221,7 +221,7 @@ CFrame (600x400px)
  │
  ├─ CViewContainer (Right Channel Group, 280x180px)
  │   ├─ CTextLabel ("RIGHT CHANNEL")
- │   ├─ CSlider (Pan, 200x30px, horizontal)
+ │   ├─ CSlider (Pan, 200x15px, horizontal)
  │   ├─ CTextLabel (Pan value display, e.g., "R75")
  │   ├─ CKnob (Gain, 60x60px)
  │   ├─ CTextLabel (Gain value display, e.g., "0.0 dB")
@@ -243,7 +243,7 @@ CFrame (600x400px)
 **Pan Sliders**:
 ```cpp
 CSlider* slider = new CSlider(
-    CRect(x, y, x+200, y+30),           // Position and size
+    CRect(x, y, x+200, y+15),           // Position and size (200x15px)
     this,                                // Listener
     kParamLeftPan,                       // Tag (parameter ID)
     x, x+200,                            // Min/max X
@@ -380,7 +380,7 @@ constexpr CRect kMasterBox(20, 240, 580, 360);
 
 // Control sizes
 constexpr int32 kSliderWidth = 200;
-constexpr int32 kSliderHeight = 30;
+constexpr int32 kSliderHeight = 15;
 constexpr int32 kKnobSize = 60;
 constexpr int32 kToggleWidth = 80;
 constexpr int32 kToggleHeight = 25;

@@ -226,7 +226,7 @@ Right Input → Right Output (no change)
 ##### Pan Sliders (Left Pan, Right Pan)
 - **Type**: Horizontal slider
 - **Visual Style**: Linear slider with center detent
-- **Dimensions**: 200px (width) × 30px (height)
+- **Dimensions**: 200px (width) × 15px (height)
 - **Range Display**:
   - Left end: "L" label
   - Right end: "R" label
