@@ -214,18 +214,155 @@ Right Input → Right Output (no change)
 - **DAW Compatibility**: VST3をサポートする全てのDAW
 
 ### 3.3 User Interface
-- **Control Types**:
-  - Sliders: Pan parameters (horizontal sliders)
-  - Knobs: Gain and Delay parameters (rotary knobs)
-  - Toggle: Link L/R Gain (switch or checkbox)
-- **Visual Feedback**:
-  - パラメータ値の数値表示
-  - Panスライダーには "L" と "R" のラベル表示
-  - -60dBは "-∞ dB" として表示
-- **Grouping**:
-  - Left Channel controls grouped together
-  - Right Channel controls grouped together
-  - Master controls separate
+
+#### 3.3.1 GUI Framework
+- **Technology**: VSTGUI 4.x (VST3 SDK付属)
+- **Window Size**: 600px (width) × 400px (height)
+- **Resizable**: No (fixed size)
+- **Platform**: Native window on Windows/macOS/Linux
+
+#### 3.3.2 Control Types
+
+##### Pan Sliders (Left Pan, Right Pan)
+- **Type**: Horizontal slider
+- **Visual Style**: Linear slider with center detent
+- **Dimensions**: 200px (width) × 30px (height)
+- **Range Display**:
+  - Left end: "L" label
+  - Right end: "R" label
+  - Center position: Visual indicator (detent)
+- **Value Display**: Above slider (e.g., "L50", "C", "R75")
+- **Interaction**:
+  - Click + drag: Adjust value
+  - Double-click: Reset to default
+  - Shift + drag: Fine adjustment (10x slower)
+
+##### Gain Knobs (Left Gain, Right Gain, Master Gain)
+- **Type**: Rotary knob
+- **Visual Style**: Circular knob with indicator line
+- **Dimensions**: 60px diameter
+- **Range**: -60dB to +6dB (270° rotation range)
+- **Value Display**: Below knob (e.g., "-3.0 dB", "-∞ dB")
+- **Interaction**:
+  - Click + drag up/down: Adjust value
+  - Double-click: Reset to 0dB
+  - Shift + drag: Fine adjustment (10x slower)
+
+##### Delay Knobs (Left Delay, Right Delay)
+- **Type**: Rotary knob
+- **Visual Style**: Circular knob with indicator line
+- **Dimensions**: 60px diameter
+- **Range**: 0ms to 100ms (270° rotation range)
+- **Value Display**: Below knob (e.g., "10.0 ms")
+- **Interaction**:
+  - Click + drag up/down: Adjust value
+  - Double-click: Reset to 0ms
+  - Shift + drag: Fine adjustment (10x slower)
+
+##### Link L/R Gain Toggle
+- **Type**: Toggle button
+- **Visual Style**: Button with LED indicator
+- **Dimensions**: 80px (width) × 25px (height)
+- **States**:
+  - OFF: Gray background, text "UNLINKED"
+  - ON: Green/highlighted background, text "LINKED"
+- **Interaction**: Click to toggle
+
+#### 3.3.3 Layout and Grouping
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  SimplePanner                                               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─── LEFT CHANNEL ────────────┐  ┌─── RIGHT CHANNEL ────┐ │
+│  │                             │  │                       │ │
+│  │  Pan:  [════●════] L50      │  │  Pan:  [════●════] R75│ │
+│  │                             │  │                       │ │
+│  │   Gain      Delay           │  │   Gain      Delay     │ │
+│  │   ╔═╗       ╔═╗             │  │   ╔═╗       ╔═╗       │ │
+│  │   ║ ║       ║ ║             │  │   ║ ║       ║ ║       │ │
+│  │   ╚═╝       ╚═╝             │  │   ╚═╝       ╚═╝       │ │
+│  │  -3.0dB    10.0ms           │  │  0.0dB     0.0ms      │ │
+│  │                             │  │                       │ │
+│  └─────────────────────────────┘  └───────────────────────┘ │
+│                                                             │
+│  ┌─── MASTER ──────────────────────────────────────────────┐│
+│  │                                                         ││
+│  │   Master Gain       [ UNLINKED ]                       ││
+│  │      ╔═╗           Link L/R Gain                       ││
+│  │      ║ ║                                               ││
+│  │      ╚═╝                                               ││
+│  │     0.0dB                                              ││
+│  │                                                         ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 3.3.4 Visual Design
+
+##### Color Scheme
+- **Background**: Dark gray (#2C2C2C)
+- **Group Boxes**: Lighter gray (#3C3C3C) with subtle border
+- **Text Labels**: Light gray (#CCCCCC)
+- **Value Text**: White (#FFFFFF)
+- **Knob Body**: Medium gray (#505050)
+- **Knob Indicator**: Accent color (e.g., #4A90E2 blue)
+- **Slider Track**: Dark gray (#404040)
+- **Slider Handle**: Accent color (#4A90E2)
+- **Toggle ON**: Green (#4CAF50) or accent color
+- **Toggle OFF**: Gray (#606060)
+
+##### Typography
+- **Labels**: Sans-serif font (e.g., Arial, Helvetica)
+  - Size: 12pt
+  - Weight: Normal
+- **Values**: Sans-serif font
+  - Size: 11pt
+  - Weight: Bold
+- **Group Titles**: Sans-serif font
+  - Size: 14pt
+  - Weight: Bold
+
+##### Spacing and Alignment
+- **Margin**: 20px from window edges
+- **Group Box Padding**: 15px internal padding
+- **Control Spacing**: 20px between controls
+- **Vertical Alignment**: Controls centered within group boxes
+
+#### 3.3.5 Interaction and Feedback
+
+##### Visual Feedback
+- **Mouse Hover**: Control brightens slightly (10% lighter)
+- **Active Drag**: Control highlights with accent color
+- **Parameter Change**: Value text updates in real-time
+- **Link Toggle**: Immediate visual state change + synchronized value update
+
+##### Value Display Format
+- **Pan Parameters**:
+  - `-100` → "L100"
+  - `-50` → "L50"
+  - `0` → "C" or "CENTER"
+  - `+50` → "R50"
+  - `+100` → "R100"
+- **Gain Parameters**:
+  - `-60.0 dB` → "-∞ dB"
+  - Other values → "±X.X dB" (1 decimal place)
+- **Delay Parameters**:
+  - "X.X ms" (1 decimal place)
+
+##### Accessibility
+- **Keyboard Support**:
+  - Tab: Navigate between controls
+  - Arrow keys: Adjust focused control
+  - Enter/Space: Activate toggle button
+- **Screen Reader**: Parameter names and values announced (if supported by VSTGUI)
+
+#### 3.3.6 DAW Integration
+- **Generic UI Fallback**: If custom GUI fails to load, DAW provides generic parameter list
+- **Parameter Automation**: All controls respond to DAW automation in real-time
+- **State Recall**: GUI reflects saved parameter values on project load
 
 ### 3.4 State Management
 - **Parameter Persistence**: 全パラメータ値はプロジェクトと共に保存される
@@ -290,12 +427,28 @@ VST3の仕様に従い、以下の分離を保つ：
 
 以下の全てを満たすこと：
 
+### 7.1 Core Functionality
 - [ ] VST3 validatorの全テストをパス
 - [ ] デフォルト状態で入力信号が変更されずに出力される
 - [ ] 全パラメータが仕様通りの範囲と挙動を示す
-- [ ] 主要DAW（Reaper, Ableton Live, FL Studio, Cubase等）で動作確認
 - [ ] パラメータオートメーションが正常に動作
+
+### 7.2 GUI Requirements
+- [ ] カスタムGUIが600×400pxで正しく表示される
+- [ ] 全てのコントロール（スライダー、ノブ、トグル）が正常に動作する
+- [ ] パラメータ値がリアルタイムで正しく表示される
+- [ ] Panは "L100"/"C"/"R100" 形式、Gainは "-∞ dB"/"0.0 dB" 形式で表示される
+- [ ] Link L/R Gainトグルが正しく連動する
+- [ ] ダブルクリックでデフォルト値にリセットできる
+- [ ] Shift+ドラッグで微調整できる
+- [ ] GUIが開閉を繰り返しても正常に動作する
+
+### 7.3 Platform and DAW Compatibility
+- [ ] 主要DAW（Reaper, Ableton Live, FL Studio, Cubase等）で動作確認
 - [ ] マルチプラットフォーム（Windows, macOS, Linux）でビルド・動作
+- [ ] GUIが各プラットフォームで正しく描画される
+
+### 7.4 Quality and Documentation
 - [ ] ドキュメント（README, この仕様書）が整備されている
 - [ ] クリティカルなメモリリークやクラッシュが存在しない
 
@@ -304,3 +457,4 @@ VST3の仕様に従い、以下の分離を保つ：
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2025-11-13 | - | Initial requirements specification |
+| 1.1 | 2025-11-13 | - | Expanded Section 3.3 with detailed GUI specifications (framework, control types, layout, visual design, interactions) |
