@@ -49,7 +49,26 @@ set(PLUGIN_SOURCES
     source/plugincontroller.cpp
     source/plugineditor.cpp
     source/pluginfactory.cpp
+    ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
 )
+
+# プラットフォーム固有のエントリポイント
+if(SMTG_LINUX)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+elseif(SMTG_WIN)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+elseif(SMTG_MAC)
+    list(APPEND PLUGIN_SOURCES
+        ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+    )
+endif()
 
 set(PLUGIN_HEADERS
     include/pluginprocessor.h
@@ -63,27 +82,6 @@ smtg_add_vst3plugin(SimplePanner
     ${PLUGIN_SOURCES}
     ${PLUGIN_HEADERS}
 )
-
-# プラットフォーム固有のエントリポイントを追加
-if(SMTG_LINUX)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
-    )
-elseif(SMTG_WIN)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
-    )
-elseif(SMTG_MAC)
-    target_sources(SimplePanner PRIVATE
-        ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
-        ${VST3_SDK_ROOT}/public.sdk/source/vst/vstguieditor.cpp
-    )
-endif()
 
 # インクルードディレクトリを追加
 target_include_directories(SimplePanner PRIVATE
