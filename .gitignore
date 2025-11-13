@@ -5,6 +5,9 @@ cmake-build-*/
 # VST3 SDK（自動クローンされる）
 vst3sdk/
 
+# バックアップディレクトリ
+backup/
+
 # IDE固有のファイル
 .vscode/
 .idea/
