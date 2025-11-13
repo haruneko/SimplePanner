@@ -63,14 +63,17 @@ smtg_add_vst3plugin(SimplePanner
 if(SMTG_LINUX)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
     )
 elseif(SMTG_WIN)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
     )
 elseif(SMTG_MAC)
     target_sources(SimplePanner PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
+        ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
     )
 endif()
 
@@ -83,6 +86,7 @@ target_include_directories(SimplePanner PRIVATE
 # VST3 SDKのライブラリをリンク
 target_link_libraries(SimplePanner PRIVATE
     sdk
+    vstgui
     vstgui_support
 )
 
