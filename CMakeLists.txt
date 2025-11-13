@@ -91,6 +91,13 @@ target_include_directories(SimplePanner PRIVATE
     ${VST3_SDK_ROOT}
 )
 
+# VSTGUI使用時のインクルードパスを追加
+if(SMTG_ENABLE_VSTGUI_SUPPORT)
+    target_include_directories(SimplePanner PRIVATE
+        ${SMTG_VSTGUI_SOURCE_DIR}
+    )
+endif()
+
 # VST3 SDKのライブラリをリンク
 target_link_libraries(SimplePanner PRIVATE
     sdk
