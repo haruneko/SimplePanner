@@ -31,8 +31,10 @@ public:
     }
 
 protected:
-    Vst::ParamValue mPan;   // -1.0 (左) to 1.0 (右)
-    Vst::ParamValue mGain;  // 0.0 to 1.0
+    // TODO: メンバー変数を追加（Task 1.4で実装）
+    // - DelayLine mDelayLeft, mDelayRight
+    // - ParameterSmoother instances
+    // - Parameter values
 };
 
 } // namespace SimplePanner

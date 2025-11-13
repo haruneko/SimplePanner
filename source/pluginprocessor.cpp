@@ -4,8 +4,6 @@
 #include "base/source/fstreamer.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 
-#include <cmath>
-
 namespace Steinberg {
 namespace SimplePanner {
 
@@ -13,8 +11,6 @@ namespace SimplePanner {
 // SimplePannerProcessor
 //------------------------------------------------------------------------
 SimplePannerProcessor::SimplePannerProcessor()
-    : mPan(0.0)
-    , mGain(1.0)
 {
     setControllerClass(ControllerUID);
 }
@@ -53,36 +49,9 @@ tresult PLUGIN_API SimplePannerProcessor::setActive(TBool state)
 //------------------------------------------------------------------------
 tresult PLUGIN_API SimplePannerProcessor::process(Vst::ProcessData& data)
 {
-    // パラメータ変更を処理
-    if (data.inputParameterChanges)
-    {
-        int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
-        for (int32 i = 0; i < numParamsChanged; i++)
-        {
-            Vst::IParamValueQueue* paramQueue = data.inputParameterChanges->getParameterData(i);
-            if (paramQueue)
-            {
-                Vst::ParamValue value;
-                int32 sampleOffset;
-                int32 numPoints = paramQueue->getPointCount();
+    // TODO: パラメータ処理とオーディオ処理を実装
+    // 現在は単純なバイパス処理のみ
 
-                if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue)
-                {
-                    switch (paramQueue->getParameterId())
-                    {
-                        case kParamPanId:
-                            mPan = value * 2.0 - 1.0; // 0.0-1.0 を -1.0-1.0 に変換
-                            break;
-                        case kParamGainId:
-                            mGain = value;
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    // オーディオ処理
     if (data.numInputs == 0 || data.numOutputs == 0)
         return kResultOk;
 
@@ -97,16 +66,11 @@ tresult PLUGIN_API SimplePannerProcessor::process(Vst::ProcessData& data)
         float* outL = outputBus.channelBuffers32[0];
         float* outR = outputBus.channelBuffers32[1];
 
-        // パンニング係数を計算 (等パワーパンニング)
-        float panRad = mPan * M_PI / 4.0f; // -45度から+45度
-        float leftGain = std::cos(panRad) * mGain;
-        float rightGain = std::sin(panRad) * mGain;
-
+        // シンプルなバイパス（入力をそのまま出力）
         for (int32 i = 0; i < data.numSamples; i++)
         {
-            float mono = (inL[i] + inR[i]) * 0.5f;
-            outL[i] = mono * leftGain;
-            outR[i] = mono * rightGain;
+            outL[i] = inL[i];
+            outR[i] = inR[i];
         }
     }
 
@@ -134,17 +98,7 @@ tresult PLUGIN_API SimplePannerProcessor::setState(IBStream* state)
     if (!state)
         return kResultFalse;
 
-    IBStreamer streamer(state, kLittleEndian);
-
-    float savedPan = 0.0f;
-    if (!streamer.readFloat(savedPan))
-        return kResultFalse;
-    mPan = savedPan;
-
-    float savedGain = 1.0f;
-    if (!streamer.readFloat(savedGain))
-        return kResultFalse;
-    mGain = savedGain;
+    // TODO: 状態の復元を実装
 
     return kResultOk;
 }
@@ -155,10 +109,7 @@ tresult PLUGIN_API SimplePannerProcessor::getState(IBStream* state)
     if (!state)
         return kResultFalse;
 
-    IBStreamer streamer(state, kLittleEndian);
-
-    streamer.writeFloat((float)mPan);
-    streamer.writeFloat((float)mGain);
+    // TODO: 状態の保存を実装
 
     return kResultOk;
 }
