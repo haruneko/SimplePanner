@@ -195,6 +195,34 @@ bool SimplePannerEditor::createUI()
         mLeftGainLabel->setText(formatGainValue(gainValue).c_str());
     }
 
+    // Left Delay Label
+    CRect leftDelayLabelRect(195, 85, 255, 100);
+    mLeftDelayLabel = new CTextLabel(leftDelayLabelRect, "0.0 ms");
+    mLeftDelayLabel->setFont(kNormalFont);
+    mLeftDelayLabel->setFontColor(CColor(255, 255, 255, 255));
+    mLeftDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mLeftDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mLeftDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(mLeftDelayLabel);
+
+    // Left Delay Knob (60x60px)
+    CRect leftDelayKnobRect(195, 105, 255, 165);
+    mLeftDelayKnob = new CKnob(leftDelayKnobRect, this, kParamLeftDelay, nullptr, nullptr);
+    mLeftDelayKnob->setMin(0.0f);
+    mLeftDelayKnob->setMax(1.0f);
+    mLeftDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
+    mLeftDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    leftGroup->addView(mLeftDelayKnob);
+
+    // Initialize Left Delay Label
+    if (getController())
+    {
+        float delayValue = getController()->getParamNormalized(kParamLeftDelay);
+        mLeftDelayKnob->setValue(delayValue);
+        mLeftDelayLabel->setText(formatDelayValue(delayValue).c_str());
+    }
+
     // === Right Channel Group ===
     CRect rightGroupRect(320, 40, 580, 220);
     CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
@@ -267,6 +295,34 @@ bool SimplePannerEditor::createUI()
         float gainValue = getController()->getParamNormalized(kParamRightGain);
         mRightGainKnob->setValue(gainValue);
         mRightGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
+
+    // Right Delay Label
+    CRect rightDelayLabelRect(185, 85, 245, 100);
+    mRightDelayLabel = new CTextLabel(rightDelayLabelRect, "0.0 ms");
+    mRightDelayLabel->setFont(kNormalFont);
+    mRightDelayLabel->setFontColor(CColor(255, 255, 255, 255));
+    mRightDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mRightDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mRightDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(mRightDelayLabel);
+
+    // Right Delay Knob (60x60px)
+    CRect rightDelayKnobRect(185, 105, 245, 165);
+    mRightDelayKnob = new CKnob(rightDelayKnobRect, this, kParamRightDelay, nullptr, nullptr);
+    mRightDelayKnob->setMin(0.0f);
+    mRightDelayKnob->setMax(1.0f);
+    mRightDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
+    mRightDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    rightGroup->addView(mRightDelayKnob);
+
+    // Initialize Right Delay Label
+    if (getController())
+    {
+        float delayValue = getController()->getParamNormalized(kParamRightDelay);
+        mRightDelayKnob->setValue(delayValue);
+        mRightDelayLabel->setText(formatDelayValue(delayValue).c_str());
     }
 
     // === Master Section ===
