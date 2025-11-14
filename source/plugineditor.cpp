@@ -372,6 +372,34 @@ bool SimplePannerEditor::createUI()
         mMasterGainLabel->setText(formatGainValue(gainValue).c_str());
     }
 
+    // Link L/R Gain Toggle Button (80x25px)
+    CRect linkToggleRect(350, 60, 430, 85);
+    mLinkToggle = new CTextButton(linkToggleRect, this, kParamLinkGain, "LINKED", CTextButton::kOnOffStyle);
+
+    // OFF state styling (UNLINKED)
+    mLinkToggle->setTextColor(CColor(200, 200, 200, 255)); // Light gray text when OFF
+    CGradient* gradientOff = CGradient::create(0.0, 1.0, CColor(96, 96, 96, 255), CColor(96, 96, 96, 255)); // #606060
+    mLinkToggle->setGradient(gradientOff);
+
+    // ON state styling (LINKED)
+    mLinkToggle->setTextColorHighlighted(CColor(255, 255, 255, 255)); // White text when ON
+    CGradient* gradientOn = CGradient::create(0.0, 1.0, CColor(76, 175, 80, 255), CColor(76, 175, 80, 255)); // #4CAF50 Green
+    mLinkToggle->setGradientHighlighted(gradientOn);
+
+    mLinkToggle->setFrameWidth(1.0);
+    mLinkToggle->setFrameColor(CColor(80, 80, 80, 255));
+    mLinkToggle->setFrameColorHighlighted(CColor(100, 200, 100, 255));
+    mLinkToggle->setRoundRadius(3.0);
+
+    masterGroup->addView(mLinkToggle);
+
+    // Initialize Link Toggle state
+    if (getController())
+    {
+        float linkValue = getController()->getParamNormalized(kParamLinkGain);
+        mLinkToggle->setValue(linkValue);
+    }
+
     return true;
 }
 
