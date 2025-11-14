@@ -431,6 +431,44 @@ void SimplePannerEditor::valueChanged(CControl* control)
 }
 
 //------------------------------------------------------------------------
+// controlBeginEdit - from IControlListener
+//------------------------------------------------------------------------
+void SimplePannerEditor::controlBeginEdit(CControl* control)
+{
+    if (!control)
+        return;
+
+    // Get the parameter tag
+    int32 tag = control->getTag();
+
+    // Notify controller that parameter editing has begun
+    // This is important for DAW automation recording
+    if (getController())
+    {
+        getController()->beginEdit(tag);
+    }
+}
+
+//------------------------------------------------------------------------
+// controlEndEdit - from IControlListener
+//------------------------------------------------------------------------
+void SimplePannerEditor::controlEndEdit(CControl* control)
+{
+    if (!control)
+        return;
+
+    // Get the parameter tag
+    int32 tag = control->getTag();
+
+    // Notify controller that parameter editing has ended
+    // This is important for DAW automation recording
+    if (getController())
+    {
+        getController()->endEdit(tag);
+    }
+}
+
+//------------------------------------------------------------------------
 // updateValueDisplay
 //------------------------------------------------------------------------
 void SimplePannerEditor::updateValueDisplay(Vst::ParamID tag)
