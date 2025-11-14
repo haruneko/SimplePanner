@@ -168,9 +168,11 @@ bool SimplePannerEditor::createUI()
     mLeftPanSlider->setMin(0.0f);
     mLeftPanSlider->setMax(1.0f);
     mLeftPanSlider->setDefaultValue(0.0f); // Full Left = -100
-    mLeftPanSlider->setBackColor(CColor(50, 50, 50, 255)); // Track: Very dark gray (darker than bg)
-    mLeftPanSlider->setFrameColor(CColor(40, 40, 40, 255)); // Border: Even darker
-    mLeftPanSlider->setValueColor(CColor(255, 255, 255, 255)); // Handle: White (high visibility)
+    mLeftPanSlider->setDrawStyle(CSlider::kDrawFrame | CSlider::kDrawBack | CSlider::kDrawValue); // Enable color drawing
+    mLeftPanSlider->setBackColor(CColor(30, 30, 30, 255)); // Track: Very dark (much darker than bg 80,80,80)
+    mLeftPanSlider->setFrameColor(CColor(20, 20, 20, 255)); // Border: Almost black
+    mLeftPanSlider->setValueColor(CColor(255, 255, 255, 255)); // Handle: White (maximum contrast)
+    mLeftPanSlider->setFrameWidth(1.0); // Frame width
     leftGroup->addView(mLeftPanSlider);
 
     // Left Pan "R" label
@@ -210,8 +212,8 @@ bool SimplePannerEditor::createUI()
     mLeftGainKnob->setMax(1.0f);
     mLeftGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
     mLeftGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
-    mLeftGainKnob->setColorHandle(CColor(200, 200, 200, 255)); // Light gray handle (high visibility)
-    mLeftGainKnob->setCoronaColor(CColor(120, 120, 120, 255)); // Medium gray corona
+    mLeftGainKnob->setColorHandle(CColor(220, 220, 220, 255)); // Very light gray handle (higher visibility)
+    mLeftGainKnob->setCoronaColor(CColor(160, 160, 160, 255)); // Light gray corona (brighter)
     mLeftGainKnob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);
     leftGroup->addView(mLeftGainKnob);
 
@@ -241,8 +243,8 @@ bool SimplePannerEditor::createUI()
     mLeftDelayKnob->setMax(1.0f);
     mLeftDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
     mLeftDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
-    mLeftDelayKnob->setColorHandle(CColor(200, 200, 200, 255)); // Light gray handle (high visibility)
-    mLeftDelayKnob->setCoronaColor(CColor(120, 120, 120, 255)); // Medium gray corona
+    mLeftDelayKnob->setColorHandle(CColor(220, 220, 220, 255)); // Very light gray handle (higher visibility)
+    mLeftDelayKnob->setCoronaColor(CColor(160, 160, 160, 255)); // Light gray corona (brighter)
     mLeftDelayKnob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);
     leftGroup->addView(mLeftDelayKnob);
 
@@ -301,9 +303,11 @@ bool SimplePannerEditor::createUI()
     mRightPanSlider->setMin(0.0f);
     mRightPanSlider->setMax(1.0f);
     mRightPanSlider->setDefaultValue(1.0f); // Full Right = +100
-    mRightPanSlider->setBackColor(CColor(50, 50, 50, 255)); // Track: Very dark gray (darker than bg)
-    mRightPanSlider->setFrameColor(CColor(40, 40, 40, 255)); // Border: Even darker
-    mRightPanSlider->setValueColor(CColor(255, 255, 255, 255)); // Handle: White (high visibility)
+    mRightPanSlider->setDrawStyle(CSlider::kDrawFrame | CSlider::kDrawBack | CSlider::kDrawValue); // Enable color drawing
+    mRightPanSlider->setBackColor(CColor(30, 30, 30, 255)); // Track: Very dark (much darker than bg 80,80,80)
+    mRightPanSlider->setFrameColor(CColor(20, 20, 20, 255)); // Border: Almost black
+    mRightPanSlider->setValueColor(CColor(255, 255, 255, 255)); // Handle: White (maximum contrast)
+    mRightPanSlider->setFrameWidth(1.0); // Frame width
     rightGroup->addView(mRightPanSlider);
 
     // Right Pan "R" label
@@ -343,8 +347,8 @@ bool SimplePannerEditor::createUI()
     mRightGainKnob->setMax(1.0f);
     mRightGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
     mRightGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
-    mRightGainKnob->setColorHandle(CColor(200, 200, 200, 255)); // Light gray handle (high visibility)
-    mRightGainKnob->setCoronaColor(CColor(120, 120, 120, 255)); // Medium gray corona
+    mRightGainKnob->setColorHandle(CColor(220, 220, 220, 255)); // Very light gray handle (higher visibility)
+    mRightGainKnob->setCoronaColor(CColor(160, 160, 160, 255)); // Light gray corona (brighter)
     mRightGainKnob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);
     rightGroup->addView(mRightGainKnob);
 
@@ -374,8 +378,8 @@ bool SimplePannerEditor::createUI()
     mRightDelayKnob->setMax(1.0f);
     mRightDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
     mRightDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
-    mRightDelayKnob->setColorHandle(CColor(200, 200, 200, 255)); // Light gray handle (high visibility)
-    mRightDelayKnob->setCoronaColor(CColor(120, 120, 120, 255)); // Medium gray corona
+    mRightDelayKnob->setColorHandle(CColor(220, 220, 220, 255)); // Very light gray handle (higher visibility)
+    mRightDelayKnob->setCoronaColor(CColor(160, 160, 160, 255)); // Light gray corona (brighter)
     mRightDelayKnob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);
     rightGroup->addView(mRightDelayKnob);
 
@@ -424,8 +428,8 @@ bool SimplePannerEditor::createUI()
     mMasterGainKnob->setMax(1.0f);
     mMasterGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
     mMasterGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
-    mMasterGainKnob->setColorHandle(CColor(200, 200, 200, 255)); // Light gray handle (high visibility)
-    mMasterGainKnob->setCoronaColor(CColor(120, 120, 120, 255)); // Medium gray corona
+    mMasterGainKnob->setColorHandle(CColor(220, 220, 220, 255)); // Very light gray handle (higher visibility)
+    mMasterGainKnob->setCoronaColor(CColor(160, 160, 160, 255)); // Light gray corona (brighter)
     mMasterGainKnob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);
     masterGroup->addView(mMasterGainKnob);
 
