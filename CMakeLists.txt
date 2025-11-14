@@ -254,4 +254,8 @@ if(SMTG_ENABLE_VSTGUI_SUPPORT)
     add_simple_panner_gui_test(test_gui_parameter_sync
         tests/unit/test_gui_parameter_sync.cpp
     )
+
+    add_simple_panner_gui_test(test_gui_visual
+        tests/unit/test_gui_visual.cpp
+    )
 endif()
