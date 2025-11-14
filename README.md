@@ -85,7 +85,39 @@ VST3 SDKは初回ビルド時に自動的にクローンされます。
 
 1. DAW（Digital Audio Workstation）でステレオトラックにプラグインを挿入
 2. デフォルト状態では入力信号がそのまま出力されます（透過状態）
-3. 各パラメータを調整してステレオイメージをコントロール
+3. GUIでパラメータを調整してステレオイメージをコントロール
+
+### GUI 操作
+
+SimplePannerは直感的なグラフィカルインターフェイスを提供します（600x400ピクセル）：
+
+#### レイアウト
+- **左チャンネルセクション**（左上）: Left Pan、Left Gain、Left Delay
+- **右チャンネルセクション**（右上）: Right Pan、Right Gain、Right Delay
+- **マスターセクション**（下部）: Master Gain、Link L/R Gain
+
+#### コントロール操作
+
+**スライダー（Pan）**:
+- ドラッグ: 値を変更
+- **Shift + ドラッグ**: 微調整モード（10倍精密）
+- **ダブルクリック**: デフォルト値にリセット
+- 両側に L/R ラベル表示
+
+**ノブ（Gain、Delay）**:
+- ドラッグ: 円形に動かして値を変更
+- **Shift + ドラッグ**: 微調整モード（10倍精密）
+- **ダブルクリック**: デフォルト値にリセット
+
+**トグルボタン（Link L/R Gain）**:
+- クリック: ON/OFF切り替え
+- **OFF状態**: グレー表示
+- **ON状態**: グリーン表示（L/Rゲイン連動）
+
+#### 値の表示
+- **Pan**: "L100"（左端）、"C"（中央）、"R50"（右50）
+- **Gain**: "-∞ dB"（ミュート）、"0.0 dB"、"+3.0 dB"
+- **Delay**: "0.0 ms"、"10.5 ms"、"100.0 ms"
 
 ### パラメータ詳細
 
@@ -133,6 +165,7 @@ SimplePanner/
 │   ├── plugids.h          # プラグインID/パラメータ定義
 │   ├── pluginprocessor.h  # オーディオ処理クラス
 │   ├── plugincontroller.h # UIコントロールクラス
+│   ├── plugineditor.h     # GUIエディタクラス
 │   ├── delay_line.h       # 遅延バッファクラス
 │   ├── parameter_smoother.h # パラメータ平滑化
 │   ├── parameter_utils.h  # パラメータ変換ユーティリティ
@@ -140,15 +173,22 @@ SimplePanner/
 ├── source/                 # ソースファイル
 │   ├── pluginprocessor.cpp
 │   ├── plugincontroller.cpp
+│   ├── plugineditor.cpp   # GUI実装
 │   ├── pluginfactory.cpp
 │   ├── delay_line.cpp
 │   ├── parameter_smoother.cpp
 │   ├── parameter_utils.cpp
 │   └── pan_calculator.cpp
 ├── tests/                  # テストコード
-│   ├── unit/              # ユニットテスト
-│   ├── integration/       # 統合テスト
+│   ├── unit/              # ユニットテスト（107 tests）
+│   │   ├── test_gui_formatting.cpp      # GUI値フォーマット
+│   │   ├── test_gui_parameter_sync.cpp  # GUIパラメータ同期
+│   │   ├── test_gui_visual.cpp          # GUI安定性
+│   │   └── ...
+│   ├── integration/       # 統合テスト（17 tests）
 │   └── manual/            # マニュアルテスト手順
+│       ├── test_procedure.md           # オーディオ機能テスト
+│       └── gui_test_procedure.md       # GUIテスト手順
 └── vst3sdk/               # VST3 SDK（自動クローン）
 ```
 
@@ -170,10 +210,13 @@ SimplePanner/
 
 このプロジェクトは **Test-Driven Development (TDD)** アプローチで開発されています：
 
-- **ユニットテスト**: 107個（parameter conversion, delay line, parameter smoother, pan calculation）
+- **ユニットテスト**: 107個
+  - DSP: parameter conversion, delay line, smoother, pan calculation
+  - GUI: formatting (18), parameter sync (13), visual stability (8)
 - **統合テスト**: 17個（processor state management）
 - **VST3 Validator**: 47テスト全てパス
 - **総テスト数**: 171テスト、100% pass rate
+- **マニュアルテスト**: GUI操作、DAW互換性テスト手順完備
 
 ### テスト実行
 
@@ -197,6 +240,9 @@ Validator は公式の VST3 仕様準拠チェックツールです。
 
 - **Processor**: オーディオ処理（DSP、遅延、パンニング）
 - **Controller**: パラメータ管理、UI通信
+- **Editor**: VSTGUI による GUI 実装（600x400px）
+  - スライダー（Pan）、ノブ（Gain/Delay）、トグルボタン
+  - リアルタイム値表示、双方向パラメータ同期
 - **DelayLine**: サーキュラーバッファによる遅延実装
 - **ParameterSmoother**: One-pole IIRフィルタによる平滑化
 - **等パワーパンニング**: cos/sin法（-3dB center）

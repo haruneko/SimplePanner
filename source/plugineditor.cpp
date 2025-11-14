@@ -118,21 +118,21 @@ bool SimplePannerEditor::createUI()
     if (!frm)
         return false;
 
-    // Set background color
-    frm->setBackgroundColor(CColor(44, 44, 44, 255)); // #2C2C2C
+    // Set background color - Dark gray
+    frm->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
 
     // === Left Channel Group ===
     CRect leftGroupRect(20, 40, 300, 220);
     CViewContainer* leftGroup = new CViewContainer(leftGroupRect);
-    leftGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    leftGroup->setBackgroundColor(CColor(80, 80, 80, 255)); // #505050 - Medium gray
     frm->addView(leftGroup);
 
     // Left Channel Title
     CRect leftTitleRect(0, 5, 280, 25);
     CTextLabel* leftTitle = new CTextLabel(leftTitleRect, "LEFT CHANNEL");
     leftTitle->setFont(kNormalFontBig);
-    leftTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
-    leftTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    leftTitle->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    leftTitle->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     leftTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
     leftTitle->setStyle(CTextLabel::kNoDrawStyle);
     leftTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
@@ -144,12 +144,23 @@ bool SimplePannerEditor::createUI()
     CRect leftPanLabelRect(40, 40, 240, 55);
     mLeftPanLabel = new CTextLabel(leftPanLabelRect, "C");
     mLeftPanLabel->setFont(kNormalFont);
-    mLeftPanLabel->setFontColor(CColor(255, 255, 255, 255));
-    mLeftPanLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftPanLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mLeftPanLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mLeftPanLabel->setFrameColor(CColor(0, 0, 0, 0));
     mLeftPanLabel->setStyle(CTextLabel::kNoDrawStyle);
     mLeftPanLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
     leftGroup->addView(mLeftPanLabel);
+
+    // Left Pan "L" label
+    CRect leftPanLLabelRect(25, 58, 35, 73);
+    CTextLabel* leftPanLLabel = new CTextLabel(leftPanLLabelRect, "L");
+    leftPanLLabel->setFont(kNormalFontSmall);
+    leftPanLLabel->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    leftPanLLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
+    leftPanLLabel->setFrameColor(CColor(0, 0, 0, 0));
+    leftPanLLabel->setStyle(CTextLabel::kNoDrawStyle);
+    leftPanLLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(leftPanLLabel);
 
     // Left Pan Slider
     CRect leftPanSliderRect(40, 60, 240, 75);
@@ -157,7 +168,21 @@ bool SimplePannerEditor::createUI()
     mLeftPanSlider->setMin(0.0f);
     mLeftPanSlider->setMax(1.0f);
     mLeftPanSlider->setDefaultValue(0.0f); // Full Left = -100
+    mLeftPanSlider->setBackColor(CColor(100, 100, 100, 255)); // Slider track background
+    mLeftPanSlider->setFrameColor(CColor(60, 60, 60, 255)); // Frame color
+    mLeftPanSlider->setValueColor(CColor(33, 150, 243, 255)); // #2196F3 - Blue handle
     leftGroup->addView(mLeftPanSlider);
+
+    // Left Pan "R" label
+    CRect leftPanRLabelRect(245, 58, 255, 73);
+    CTextLabel* leftPanRLabel = new CTextLabel(leftPanRLabelRect, "R");
+    leftPanRLabel->setFont(kNormalFontSmall);
+    leftPanRLabel->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    leftPanRLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
+    leftPanRLabel->setFrameColor(CColor(0, 0, 0, 0));
+    leftPanRLabel->setStyle(CTextLabel::kNoDrawStyle);
+    leftPanRLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(leftPanRLabel);
 
     // Initialize Left Pan Label
     if (getController())
@@ -171,8 +196,8 @@ bool SimplePannerEditor::createUI()
     CRect leftGainLabelRect(110, 85, 170, 100);
     mLeftGainLabel = new CTextLabel(leftGainLabelRect, "0.0 dB");
     mLeftGainLabel->setFont(kNormalFont);
-    mLeftGainLabel->setFontColor(CColor(255, 255, 255, 255));
-    mLeftGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftGainLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mLeftGainLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mLeftGainLabel->setFrameColor(CColor(0, 0, 0, 0));
     mLeftGainLabel->setStyle(CTextLabel::kNoDrawStyle);
     mLeftGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
@@ -199,8 +224,8 @@ bool SimplePannerEditor::createUI()
     CRect leftDelayLabelRect(195, 85, 255, 100);
     mLeftDelayLabel = new CTextLabel(leftDelayLabelRect, "0.0 ms");
     mLeftDelayLabel->setFont(kNormalFont);
-    mLeftDelayLabel->setFontColor(CColor(255, 255, 255, 255));
-    mLeftDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftDelayLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mLeftDelayLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mLeftDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
     mLeftDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
     mLeftDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
@@ -226,15 +251,15 @@ bool SimplePannerEditor::createUI()
     // === Right Channel Group ===
     CRect rightGroupRect(320, 40, 580, 220);
     CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
-    rightGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    rightGroup->setBackgroundColor(CColor(80, 80, 80, 255)); // #505050 - Medium gray
     frm->addView(rightGroup);
 
     // Right Channel Title
     CRect rightTitleRect(0, 5, 260, 25);
     CTextLabel* rightTitle = new CTextLabel(rightTitleRect, "RIGHT CHANNEL");
     rightTitle->setFont(kNormalFontBig);
-    rightTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
-    rightTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    rightTitle->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    rightTitle->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     rightTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
     rightTitle->setStyle(CTextLabel::kNoDrawStyle);
     rightTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
@@ -246,12 +271,23 @@ bool SimplePannerEditor::createUI()
     CRect rightPanLabelRect(30, 40, 230, 55);
     mRightPanLabel = new CTextLabel(rightPanLabelRect, "C");
     mRightPanLabel->setFont(kNormalFont);
-    mRightPanLabel->setFontColor(CColor(255, 255, 255, 255));
-    mRightPanLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightPanLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mRightPanLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mRightPanLabel->setFrameColor(CColor(0, 0, 0, 0));
     mRightPanLabel->setStyle(CTextLabel::kNoDrawStyle);
     mRightPanLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
     rightGroup->addView(mRightPanLabel);
+
+    // Right Pan "L" label
+    CRect rightPanLLabelRect(15, 58, 25, 73);
+    CTextLabel* rightPanLLabel = new CTextLabel(rightPanLLabelRect, "L");
+    rightPanLLabel->setFont(kNormalFontSmall);
+    rightPanLLabel->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    rightPanLLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
+    rightPanLLabel->setFrameColor(CColor(0, 0, 0, 0));
+    rightPanLLabel->setStyle(CTextLabel::kNoDrawStyle);
+    rightPanLLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(rightPanLLabel);
 
     // Right Pan Slider
     CRect rightPanSliderRect(30, 60, 230, 75);
@@ -259,7 +295,21 @@ bool SimplePannerEditor::createUI()
     mRightPanSlider->setMin(0.0f);
     mRightPanSlider->setMax(1.0f);
     mRightPanSlider->setDefaultValue(1.0f); // Full Right = +100
+    mRightPanSlider->setBackColor(CColor(100, 100, 100, 255)); // Slider track background
+    mRightPanSlider->setFrameColor(CColor(60, 60, 60, 255)); // Frame color
+    mRightPanSlider->setValueColor(CColor(33, 150, 243, 255)); // #2196F3 - Blue handle
     rightGroup->addView(mRightPanSlider);
+
+    // Right Pan "R" label
+    CRect rightPanRLabelRect(235, 58, 245, 73);
+    CTextLabel* rightPanRLabel = new CTextLabel(rightPanRLabelRect, "R");
+    rightPanRLabel->setFont(kNormalFontSmall);
+    rightPanRLabel->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    rightPanRLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
+    rightPanRLabel->setFrameColor(CColor(0, 0, 0, 0));
+    rightPanRLabel->setStyle(CTextLabel::kNoDrawStyle);
+    rightPanRLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(rightPanRLabel);
 
     // Initialize Right Pan Label
     if (getController())
@@ -273,8 +323,8 @@ bool SimplePannerEditor::createUI()
     CRect rightGainLabelRect(100, 85, 160, 100);
     mRightGainLabel = new CTextLabel(rightGainLabelRect, "0.0 dB");
     mRightGainLabel->setFont(kNormalFont);
-    mRightGainLabel->setFontColor(CColor(255, 255, 255, 255));
-    mRightGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightGainLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mRightGainLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mRightGainLabel->setFrameColor(CColor(0, 0, 0, 0));
     mRightGainLabel->setStyle(CTextLabel::kNoDrawStyle);
     mRightGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
@@ -301,8 +351,8 @@ bool SimplePannerEditor::createUI()
     CRect rightDelayLabelRect(185, 85, 245, 100);
     mRightDelayLabel = new CTextLabel(rightDelayLabelRect, "0.0 ms");
     mRightDelayLabel->setFont(kNormalFont);
-    mRightDelayLabel->setFontColor(CColor(255, 255, 255, 255));
-    mRightDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightDelayLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mRightDelayLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mRightDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
     mRightDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
     mRightDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
@@ -328,15 +378,15 @@ bool SimplePannerEditor::createUI()
     // === Master Section ===
     CRect masterRect(20, 240, 580, 360);
     CViewContainer* masterGroup = new CViewContainer(masterRect);
-    masterGroup->setBackgroundColor(CColor(60, 60, 60, 255)); // #3C3C3C
+    masterGroup->setBackgroundColor(CColor(80, 80, 80, 255)); // #505050 - Medium gray
     frm->addView(masterGroup);
 
     // Master Title
     CRect masterTitleRect(0, 5, 560, 25);
     CTextLabel* masterTitle = new CTextLabel(masterTitleRect, "MASTER");
     masterTitle->setFont(kNormalFontBig);
-    masterTitle->setFontColor(CColor(204, 204, 204, 255)); // #CCCCCC
-    masterTitle->setBackColor(CColor(60, 60, 60, 0)); // Transparent
+    masterTitle->setFontColor(CColor(176, 176, 176, 255)); // #B0B0B0 - Light gray
+    masterTitle->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     masterTitle->setFrameColor(CColor(0, 0, 0, 0)); // No frame
     masterTitle->setStyle(CTextLabel::kNoDrawStyle);
     masterTitle->setTextTruncateMode(CTextLabel::kTruncateNone);
@@ -348,8 +398,8 @@ bool SimplePannerEditor::createUI()
     CRect masterGainLabelRect(250, 35, 310, 50);
     mMasterGainLabel = new CTextLabel(masterGainLabelRect, "0.0 dB");
     mMasterGainLabel->setFont(kNormalFont);
-    mMasterGainLabel->setFontColor(CColor(255, 255, 255, 255));
-    mMasterGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mMasterGainLabel->setFontColor(CColor(255, 255, 255, 255)); // White value text
+    mMasterGainLabel->setBackColor(CColor(80, 80, 80, 0)); // Transparent
     mMasterGainLabel->setFrameColor(CColor(0, 0, 0, 0));
     mMasterGainLabel->setStyle(CTextLabel::kNoDrawStyle);
     mMasterGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
