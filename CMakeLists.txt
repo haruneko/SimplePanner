@@ -199,3 +199,55 @@ endfunction()
 add_simple_panner_integration_test(test_processor_state
     tests/integration/test_processor_state.cpp
 )
+
+#------------------------------------------------------------------------
+# GUI Tests (require VSTGUI)
+#------------------------------------------------------------------------
+if(SMTG_ENABLE_VSTGUI_SUPPORT)
+    function(add_simple_panner_gui_test test_name test_file)
+        # Platform-specific main file for moduleHandle
+        if(SMTG_LINUX)
+            set(PLATFORM_MAIN ${VST3_SDK_ROOT}/public.sdk/source/main/linuxmain.cpp)
+        elseif(SMTG_WIN)
+            set(PLATFORM_MAIN ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp)
+        elseif(SMTG_MAC)
+            set(PLATFORM_MAIN ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp)
+        endif()
+
+        add_executable(${test_name}
+            ${test_file}
+            source/plugineditor.cpp
+            source/plugincontroller.cpp
+            source/pluginprocessor.cpp
+            source/pluginfactory.cpp
+            ${VST3_SDK_ROOT}/public.sdk/source/common/memorystream.cpp
+            ${VST3_SDK_ROOT}/public.sdk/source/main/moduleinit.cpp
+            ${PLATFORM_MAIN}
+        )
+        target_link_libraries(${test_name} PRIVATE
+            gtest_main
+            sdk
+            vstgui_support
+            pluginterfaces
+            base
+        )
+        target_include_directories(${test_name} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${VST3_SDK_ROOT}
+            ${VST3_SDK_ROOT}/vstgui4
+        )
+
+        # macOS specific: Link CoreFoundation framework
+        if(APPLE)
+            target_link_libraries(${test_name} PRIVATE
+                "-framework CoreFoundation"
+            )
+        endif()
+
+        add_test(NAME ${test_name} COMMAND ${test_name})
+    endfunction()
+
+    add_simple_panner_gui_test(test_gui_formatting
+        tests/unit/test_gui_formatting.cpp
+    )
+endif()

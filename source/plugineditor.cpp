@@ -167,6 +167,62 @@ bool SimplePannerEditor::createUI()
         mLeftPanLabel->setText(formatPanValue(panValue).c_str());
     }
 
+    // Left Gain Label
+    CRect leftGainLabelRect(110, 85, 170, 100);
+    mLeftGainLabel = new CTextLabel(leftGainLabelRect, "0.0 dB");
+    mLeftGainLabel->setFont(kNormalFont);
+    mLeftGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mLeftGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mLeftGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mLeftGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(mLeftGainLabel);
+
+    // Left Gain Knob (60x60px)
+    CRect leftGainKnobRect(110, 105, 170, 165);
+    mLeftGainKnob = new CKnob(leftGainKnobRect, this, kParamLeftGain, nullptr, nullptr);
+    mLeftGainKnob->setMin(0.0f);
+    mLeftGainKnob->setMax(1.0f);
+    mLeftGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mLeftGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    leftGroup->addView(mLeftGainKnob);
+
+    // Initialize Left Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamLeftGain);
+        mLeftGainKnob->setValue(gainValue);
+        mLeftGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
+
+    // Left Delay Label
+    CRect leftDelayLabelRect(195, 85, 255, 100);
+    mLeftDelayLabel = new CTextLabel(leftDelayLabelRect, "0.0 ms");
+    mLeftDelayLabel->setFont(kNormalFont);
+    mLeftDelayLabel->setFontColor(CColor(255, 255, 255, 255));
+    mLeftDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mLeftDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mLeftDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mLeftDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    leftGroup->addView(mLeftDelayLabel);
+
+    // Left Delay Knob (60x60px)
+    CRect leftDelayKnobRect(195, 105, 255, 165);
+    mLeftDelayKnob = new CKnob(leftDelayKnobRect, this, kParamLeftDelay, nullptr, nullptr);
+    mLeftDelayKnob->setMin(0.0f);
+    mLeftDelayKnob->setMax(1.0f);
+    mLeftDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
+    mLeftDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    leftGroup->addView(mLeftDelayKnob);
+
+    // Initialize Left Delay Label
+    if (getController())
+    {
+        float delayValue = getController()->getParamNormalized(kParamLeftDelay);
+        mLeftDelayKnob->setValue(delayValue);
+        mLeftDelayLabel->setText(formatDelayValue(delayValue).c_str());
+    }
+
     // === Right Channel Group ===
     CRect rightGroupRect(320, 40, 580, 220);
     CViewContainer* rightGroup = new CViewContainer(rightGroupRect);
@@ -213,6 +269,62 @@ bool SimplePannerEditor::createUI()
         mRightPanLabel->setText(formatPanValue(panValue).c_str());
     }
 
+    // Right Gain Label
+    CRect rightGainLabelRect(100, 85, 160, 100);
+    mRightGainLabel = new CTextLabel(rightGainLabelRect, "0.0 dB");
+    mRightGainLabel->setFont(kNormalFont);
+    mRightGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mRightGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mRightGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mRightGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(mRightGainLabel);
+
+    // Right Gain Knob (60x60px)
+    CRect rightGainKnobRect(100, 105, 160, 165);
+    mRightGainKnob = new CKnob(rightGainKnobRect, this, kParamRightGain, nullptr, nullptr);
+    mRightGainKnob->setMin(0.0f);
+    mRightGainKnob->setMax(1.0f);
+    mRightGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mRightGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    rightGroup->addView(mRightGainKnob);
+
+    // Initialize Right Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamRightGain);
+        mRightGainKnob->setValue(gainValue);
+        mRightGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
+
+    // Right Delay Label
+    CRect rightDelayLabelRect(185, 85, 245, 100);
+    mRightDelayLabel = new CTextLabel(rightDelayLabelRect, "0.0 ms");
+    mRightDelayLabel->setFont(kNormalFont);
+    mRightDelayLabel->setFontColor(CColor(255, 255, 255, 255));
+    mRightDelayLabel->setBackColor(CColor(60, 60, 60, 0));
+    mRightDelayLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mRightDelayLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mRightDelayLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    rightGroup->addView(mRightDelayLabel);
+
+    // Right Delay Knob (60x60px)
+    CRect rightDelayKnobRect(185, 105, 245, 165);
+    mRightDelayKnob = new CKnob(rightDelayKnobRect, this, kParamRightDelay, nullptr, nullptr);
+    mRightDelayKnob->setMin(0.0f);
+    mRightDelayKnob->setMax(1.0f);
+    mRightDelayKnob->setDefaultValue(0.0f); // 0ms default (no delay)
+    mRightDelayKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    rightGroup->addView(mRightDelayKnob);
+
+    // Initialize Right Delay Label
+    if (getController())
+    {
+        float delayValue = getController()->getParamNormalized(kParamRightDelay);
+        mRightDelayKnob->setValue(delayValue);
+        mRightDelayLabel->setText(formatDelayValue(delayValue).c_str());
+    }
+
     // === Master Section ===
     CRect masterRect(20, 240, 580, 360);
     CViewContainer* masterGroup = new CViewContainer(masterRect);
@@ -232,7 +344,33 @@ bool SimplePannerEditor::createUI()
     masterTitle->setHoriAlign(CHoriTxtAlign::kCenterText);
     masterGroup->addView(masterTitle);
 
-    // TODO: Add GUI controls in subsequent tasks
+    // Master Gain Label
+    CRect masterGainLabelRect(250, 35, 310, 50);
+    mMasterGainLabel = new CTextLabel(masterGainLabelRect, "0.0 dB");
+    mMasterGainLabel->setFont(kNormalFont);
+    mMasterGainLabel->setFontColor(CColor(255, 255, 255, 255));
+    mMasterGainLabel->setBackColor(CColor(60, 60, 60, 0));
+    mMasterGainLabel->setFrameColor(CColor(0, 0, 0, 0));
+    mMasterGainLabel->setStyle(CTextLabel::kNoDrawStyle);
+    mMasterGainLabel->setHoriAlign(CHoriTxtAlign::kCenterText);
+    masterGroup->addView(mMasterGainLabel);
+
+    // Master Gain Knob (60x60px)
+    CRect masterGainKnobRect(250, 55, 310, 115);
+    mMasterGainKnob = new CKnob(masterGainKnobRect, this, kParamMasterGain, nullptr, nullptr);
+    mMasterGainKnob->setMin(0.0f);
+    mMasterGainKnob->setMax(1.0f);
+    mMasterGainKnob->setDefaultValue(dbToNormalized(0.0f)); // 0dB default
+    mMasterGainKnob->setZoomFactor(10.0f); // Shift+drag for fine adjustment
+    masterGroup->addView(mMasterGainKnob);
+
+    // Initialize Master Gain Label
+    if (getController())
+    {
+        float gainValue = getController()->getParamNormalized(kParamMasterGain);
+        mMasterGainKnob->setValue(gainValue);
+        mMasterGainLabel->setText(formatGainValue(gainValue).c_str());
+    }
 
     return true;
 }
