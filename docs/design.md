@@ -238,9 +238,38 @@ CFrame (600x400px)
 
 #### 3.3.3 GUI Implementation Details
 
+##### Color Scheme
+
+**Background Colors**:
+- Frame background: `CColor(60, 60, 60, 255)` - #3C3C3C (Dark gray)
+- Group boxes: `CColor(80, 80, 80, 255)` - #505050 (Medium gray)
+
+**Control Colors** (視認性重視):
+- Slider track: `CColor(50, 50, 50, 255)` - #323232 (Very dark, darker than background)
+- Slider handle: `CColor(255, 255, 255, 255)` - #FFFFFF (White for high contrast)
+- Slider frame: `CColor(40, 40, 40, 255)` - #282828 (Very dark border)
+- Knob handle: `CColor(200, 200, 200, 255)` - #C8C8C8 (Light gray handle, high visibility)
+- Knob corona: `CColor(120, 120, 120, 255)` - #787878 (Medium gray arc)
+
+**Text Colors**:
+- Title labels: `CColor(176, 176, 176, 255)` - #B0B0B0 (Light gray)
+- Value text: `CColor(255, 255, 255, 255)` - #FFFFFF (White)
+- L/R labels: `CColor(176, 176, 176, 255)` - #B0B0B0 (Light gray)
+
+**Accent Colors**:
+- Link button ON: `CColor(76, 175, 80, 255)` - #4CAF50 (Green)
+- Link button OFF: `CColor(96, 96, 96, 255)` - #606060 (Gray)
+
+**Design Rationale**:
+- スライダートラックを背景(80,80,80)より暗い(50,50,50)にして境界を明確化
+- スライダーハンドルを白(255,255,255)にして現在位置を明確に視認可能に
+- ノブハンドルを明るい灰色(200,200,200)にして現在位置を明確化
+- ノブコロナを中間灰色(120,120,120)にして値の範囲を表示
+- すべてのコントロールが暗い環境でも識別可能
+
 ##### Control Configuration
 
-**Pan Sliders**:
+**Pan Sliders** (視認性改善版):
 ```cpp
 CSlider* slider = new CSlider(
     CRect(x, y, x+200, y+15),           // Position and size (200x15px)
@@ -248,29 +277,32 @@ CSlider* slider = new CSlider(
     kParamLeftPan,                       // Tag (parameter ID)
     x, x+200,                            // Min/max X
     nullptr,                             // Handle bitmap (nullptr = default)
-    nullptr,                             // Background bitmap (nullptr = default)
-    CPoint(0, 0),                        // Offset
-    kHorizontal                          // Orientation
+    nullptr                              // Background bitmap (nullptr = default)
 );
 slider->setDefaultValue(0.0f);           // Center for left, 1.0 for right
 slider->setMin(0.0f);
 slider->setMax(1.0f);
+slider->setBackColor(CColor(50, 50, 50, 255));    // Track: Very dark gray
+slider->setFrameColor(CColor(40, 40, 40, 255));   // Border: Even darker
+slider->setValueColor(CColor(255, 255, 255, 255)); // Handle: White (high visibility)
 ```
 
-**Gain/Delay Knobs**:
+**Gain/Delay Knobs** (視認性改善版):
 ```cpp
 CKnob* knob = new CKnob(
     CRect(x, y, x+60, y+60),             // Position and size
     this,                                // Listener
     kParamLeftGain,                      // Tag (parameter ID)
     nullptr,                             // Background bitmap (nullptr = default draw)
-    nullptr,                             // Handle bitmap (nullptr = default)
-    CPoint(0, 0)                         // Offset
+    nullptr                              // Handle bitmap (nullptr = default)
 );
 knob->setMin(0.0f);
 knob->setMax(1.0f);
 knob->setDefaultValue(dbToNormalized(0.0f));  // 0dB
 knob->setZoomFactor(10.0f);              // Shift+drag for fine adjustment
+knob->setColorHandle(CColor(200, 200, 200, 255));  // Light gray handle (high visibility)
+knob->setCoronaColor(CColor(120, 120, 120, 255));  // Medium gray corona
+knob->setDrawStyle(CKnob::kHandleCircleDrawing | CKnob::kCoronaDrawing);  // Enable visual elements
 ```
 
 **Link Toggle Button**:
