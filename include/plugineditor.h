@@ -23,7 +23,9 @@ public:
     void PLUGIN_API close() SMTG_OVERRIDE;
 
     //--- IControlListener implementation -----------
-    void valueChanged(CControl* control);
+    void valueChanged(CControl* control) SMTG_OVERRIDE;
+    void controlBeginEdit(CControl* control) SMTG_OVERRIDE;
+    void controlEndEdit(CControl* control) SMTG_OVERRIDE;
 
 protected:
     //--- GUI Creation -------------------
